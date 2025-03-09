@@ -25,7 +25,7 @@ const AddDepartment = () => {
 
 
 try {
-  const responce = await axios.post("https://employee-backend-e7zs.vercel.app/api/department",departments ,{
+  const responce = await axios.post("https://employee-backend-last.vercel.app/api/department",departments ,{
 
     headers : {
     'Authorization' :`Bearer ${localStorage?.getItem('token')}`

@@ -13,7 +13,7 @@ const Detail = () => {
   const ViewLeaves = async () => {
     try {
       const responce = await axios.get(
-        `https://employee-backend-e7zs.vercel.app/api/view-leave/${id}`,
+        `https://employee-backend-last.vercel.app/api/view-leave/${id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

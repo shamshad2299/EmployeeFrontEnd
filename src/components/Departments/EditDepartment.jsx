@@ -47,7 +47,7 @@ const EditDepartment = () => {
 
     e.preventDefault();
     try {
-      const fetchData = await axios.post(`https://employee-backend-e7zs.vercel.app/api/edit-department/${id}`,departments ,{
+      const fetchData = await axios.post(`https://employee-backend-last.vercel.app/api/edit-department/${id}`,departments ,{
         headers : {
           Authorization : `Bearer ${localStorage.getItem("token")}`
         }

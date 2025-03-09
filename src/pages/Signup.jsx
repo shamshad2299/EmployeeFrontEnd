@@ -20,7 +20,7 @@ const Signup = () => {
 
     try {
       const responce = await axios.post(
-       AllApi.register.url, 
+       "https://employee-backend-last.vercel.app/register", 
         { name ,email ,password}
       );
 

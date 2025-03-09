@@ -49,7 +49,7 @@ const Setting = () => {
   else {
   try {
 
-    const responce  = await axios.put("https://employee-backend-e7zs.vercel.app/api/setting" , passwords ,{
+    const responce  = await axios.put("https://employee-backend-last.vercel.app/api/setting" , passwords ,{
       headers : {
         Authorization : `Bearer ${localStorage.getItem("token")}`
       }

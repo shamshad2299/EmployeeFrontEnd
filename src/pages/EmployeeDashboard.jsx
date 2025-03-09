@@ -54,7 +54,7 @@ const handleClick = ()=>{
     try {
       setEmLoading(true);
       const getEmployeeData = await axios.get(
-        "https://employee-backend-e7zs.vercel.app/api/get-employee",{
+        "https://employee-backend-last.vercel.app/api/get-employee",{
           headers : {
             "Authorization" : `Bearer ${localStorage.getItem("token")}`
           }

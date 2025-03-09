@@ -12,7 +12,7 @@ const AllLeaveHistory = () => {
   useEffect(() => {
     const getLeaves = async()=>{
    
-      const responce = await axios.get(`https://employee-backend-e7zs.vercel.app/api/getLeave/${id}`,   {
+      const responce = await axios.get(`https://employee-backend-last.vercel.app/api/getLeave/${id}`,   {
         headers : {
           Authorization :`Bearer ${localStorage.getItem("token")}`
         }

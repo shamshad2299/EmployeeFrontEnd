@@ -9,7 +9,7 @@ export const fetchDataResponce = async () => {
 
   try {
     const getDepartmentRes = await axios.get(
-      "https://employee-backend-e7zs.vercel.app/api/getdep",{
+      "https://employee-backend-last.vercel.app/api/getdep",{
         headers : {
           "Authorization" : `Bearer ${localStorage.getItem("token")}`
         }

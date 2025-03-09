@@ -14,7 +14,7 @@ const ViewSalary = () => {
 
 const fetchSalary = async()=>{
   try {
-    const responce = await axios.get(`https://employee-backend-e7zs.vercel.app/api/employee/salary/${id}` ,{
+    const responce = await axios.get(`https://employee-backend-last.vercel.app/api/employee/salary/${id}` ,{
       headers : {
         Authorization : `Bearer ${localStorage.getItem("token")}`
       }
