@@ -38,7 +38,7 @@ const RequestLeave = () => {
 
     try {
       const responce = await axios.post(
-        "http://localhost:3000/api/leave/applied",
+        "https://employee-backend-e7zs.vercel.app/api/leave/applied",
         leavApplied,
         {
           headers: {

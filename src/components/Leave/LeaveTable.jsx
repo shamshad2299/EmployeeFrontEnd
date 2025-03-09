@@ -20,7 +20,7 @@ const LeaveTable = () => {
   const fetchDataResponce = async () => {
     try {
       const responce = await axios.get(
-        "http://localhost:3000/api/leave",
+        "https://employee-backend-e7zs.vercel.app/api/leave",
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

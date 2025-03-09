@@ -1,4 +1,4 @@
-const basicUrl  = "http://localhost:3000/api";
+const basicUrl  = "https://employee-backend-e7zs.vercel.app";
 
 export const AllApi = {
 
