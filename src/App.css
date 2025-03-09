@@ -1,0 +1,12 @@
+.admin-sidebar ul :link{
+display: flex;
+gap: 10px;
+align-items: center;
+}
+.admin-sidebar ul li:hover{
+  background-color: rgb(21, 121, 121);
+  cursor: pointer;
+  border-radius: 5px;
+  
+}
+
