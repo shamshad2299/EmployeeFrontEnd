@@ -22,7 +22,7 @@ const EditDepartment = () => {
   //Finding departments which is being edited
   const EditData = async()=>{
     try {
-      const fetchData = await axios.get(`http://localhost:3000/api/get-department/${id}` ,{
+      const fetchData = await axios.get(`https://employee-backend-last.vercel.app/api/get-department/${id}` ,{
         headers : {
           Authorization : `Bearer ${localStorage.getItem("token")}`
         }

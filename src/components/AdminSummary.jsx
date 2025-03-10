@@ -17,7 +17,7 @@ const AdminSummary = () => {
  
 
 const getData = async()=>{
-  const responce = await axios.get("http://localhost:3000/api/dashboard" ,{
+  const responce = await axios.get("https://employee-backend-last.vercel.app/api/dashboard" ,{
     headers : {
       Authorization : `Bearer ${localStorage.getItem("token")}`
      }

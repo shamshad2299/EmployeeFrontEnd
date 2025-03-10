@@ -72,7 +72,7 @@ const Detail = () => {
           <div className=" bg-gradient-to-b from-red-600 from-50% to-green-600 to-50% w-80 h-70 p-1 rounded-full">
             <img
               className="rounded-full w-full h-full"
-              src={`http://localhost:3000/${leaves?.employeeId?.userId?.profilePic}`}
+              src={`https://employee-backend-last.vercel.app/${leaves?.employeeId?.userId?.profilePic}`}
               alt="employee-image"
             />
           </div>
