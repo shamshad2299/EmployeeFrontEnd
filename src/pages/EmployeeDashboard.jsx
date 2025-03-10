@@ -68,7 +68,7 @@ const handleClick = ()=>{
         const finalData = await getEmployeeData.data.employees.map((emp)=>({
 
           id : emp._id,
-          image :<img width={30} height={30} className="rounded-full" src={`http://localhost:3000/${emp.userId.profilePic}`}  onClick={handleClick}/>,
+          image :<img width={30} height={30} className="rounded-full" src={`https://employee-backend-last.vercel.app/${emp.userId.profilePic}`}  onClick={handleClick}/>,
          sno : sno++,
          name : emp.userId.name,
          dob :new Date(emp.dob).toLocaleDateString() ,

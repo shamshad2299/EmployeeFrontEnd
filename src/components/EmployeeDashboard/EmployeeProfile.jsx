@@ -55,7 +55,7 @@ loading ? <div>Loading Please wait....</div>  : employee ? <div>
      <h3 className='w-fit text-2xl font-bold mx-auto mb-5 '>Employee Details</h3>
    
        <div className='flex justify-evenly items-center '>
-       <div className='bg-red-400 p-1 rounded-full'><img className='rounded-full' width={200}  src={`http://localhost:3000/${employee?.userId?.profilePic}`} alt="" /></div>
+       <div className='bg-red-400 p-1 rounded-full'><img className='rounded-full' width={200}  src={`https://employee-backend-last.vercel.app/${employee?.userId?.profilePic}`} alt="" /></div>
       <div className='flex flex-col '>
       <div className='flex'><p className='font-bold mb-3 p-1'>Name : </p> <span className='p-1 text-sm'>{employee?.userId?.name}</span></div>
        <div className='flex'><p className='font-bold mb-3 p-1'>Employee Id : </p> <span className='p-1 text-sm'>{employee?.employeeId}</span></div>
