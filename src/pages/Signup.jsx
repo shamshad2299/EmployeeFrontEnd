@@ -20,7 +20,7 @@ const Signup = () => {
 
     try {
       const responce = await axios.post(
-       "https://employee-backend-last.vercel.app/register", 
+       "https://employee-backend-last.vercel.app/api/register", 
         { name ,email ,password}
       );
 
