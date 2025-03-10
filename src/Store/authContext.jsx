@@ -21,7 +21,7 @@ const AuthContextProvider = ({ children }) => {
         if (token) {
           setLoading(true);
           const dataResponce = await axios.get(
-            AllApi.verifyUser.url,
+          "https://employee-backend-last.vercel.app/api/verify-user",
             {
               headers: {
                 Authorization: `bearer ${token}`,
