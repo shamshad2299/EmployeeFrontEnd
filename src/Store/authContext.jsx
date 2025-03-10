@@ -15,9 +15,6 @@ const AuthContextProvider = ({ children }) => {
   //const[viewEmployee, setViewEmployee] = useState(false);
 
 
-
-
-  useEffect(()=>{
      const verifyUser = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -47,9 +44,13 @@ const AuthContextProvider = ({ children }) => {
         setLoading(false);
       }
     };
+
+
     // call the function inSide useEffect hook
-    verifyUser();
+  useEffect(()=>{
+  verifyUser();
   },[])
+ 
 
   const login = (backendUser) => {
     setuser(backendUser);

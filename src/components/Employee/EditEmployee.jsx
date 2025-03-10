@@ -47,7 +47,7 @@ useEffect(()=>{
   const getPrviousData = async()=>{
     try {
   
-      const getData = await axios.get(`http://localhost:3000/api/edit-employee/${id}`,{
+      const getData = await axios.get(`https://employee-backend-last.vercel.app/api/${id}`,{
         headers : {
           Authorization : `Bearer ${localStorage.getItem("token")}`
         }
