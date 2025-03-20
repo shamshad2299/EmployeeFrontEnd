@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { LeaveButton, leaveStatus } from "../../pages/utils/LeaveHelper";
 import axios from "axios"
+import { AllApi } from "../../CommonApiContainer/AllApi";
 const LeaveTable = () => {
   const [data, setData] = useState([
     {
@@ -20,7 +21,7 @@ const LeaveTable = () => {
   const fetchDataResponce = async () => {
     try {
       const responce = await axios.get(
-        "https://employee-backend-last.vercel.app/api/leave",
+       ` ${AllApi.getAllLeaves.url}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -77,14 +78,14 @@ const LeaveTable = () => {
       <h3 className="text-3xl font-semibold text-center pb-5 pt-5">
         Manage Leaves
       </h3>
-      <div className="flex justify-between mr-10 ml-10">
+      <div className="flex justify-between mr-10 ml-10  max-sm:flex-col  max-sm:gap-10">
         <input
           type="text"
           className="border-2 border-gray-400 px-2 py-1 rounded-md"
           placeholder="Search by employee Id"
           onChange={filterChange}
         />
-        <div className="flex gap-4">
+        <div className="flex gap-4  max-sm:flex-col">
           <button className="bg-teal-600 text-white px-2 py-1 font-semibold rounded-md cursor-pointer"
           onClick={()=>handleFilterByButton("pending")}>
             Pending

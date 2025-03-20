@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast} from "react-toastify"
+import { AllApi } from '../../CommonApiContainer/AllApi';
 
 const EditDepartment = () => {
 
@@ -22,7 +23,7 @@ const EditDepartment = () => {
   //Finding departments which is being edited
   const EditData = async()=>{
     try {
-      const fetchData = await axios.get(`https://employee-backend-last.vercel.app/api/get-department/${id}` ,{
+      const fetchData = await axios.get(`${AllApi.getDepartmentById/url}/${id}` ,{
         headers : {
           Authorization : `Bearer ${localStorage.getItem("token")}`
         }
@@ -47,7 +48,7 @@ const EditDepartment = () => {
 
     e.preventDefault();
     try {
-      const fetchData = await axios.post(`https://employee-backend-last.vercel.app/api/edit-department/${id}`,departments ,{
+      const fetchData = await axios.post(`${AllApi.editDepartment/url}/${id}`,departments ,{
         headers : {
           Authorization : `Bearer ${localStorage.getItem("token")}`
         }
@@ -73,7 +74,7 @@ const EditDepartment = () => {
   return (
     <div className="pt-20 bg-slate-200 h-full">
       {loading ?  <div> Loading ......</div> : 
-    <div className="bg-white mx-auto  max-w-3xl w-96  p-10  shadow-2xl rounded">
+    <div className="bg-white mx-auto  max-w-3xl sm:w-96 w-75  p-10  shadow-2xl rounded">
       <h3 className="text-2xl font-medium text-center mb-10">Edit Department</h3>
       <div className="bg-white flex justify-center items-center ">
         
@@ -95,7 +96,7 @@ const EditDepartment = () => {
             <label htmlFor="description" className="text-gray-700">Description</label>
             <textarea
               name="description"
-              className="border w-80 h-25 mt-1"
+              className="border sm:w-80 w-65 h-25 mt-1"
               value={departments?.description}
               onChange={handleOnChange}
             ></textarea>

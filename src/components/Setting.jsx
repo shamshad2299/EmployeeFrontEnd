@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useAuth } from "../Store/authContext";
 import { useNavigate } from "react-router-dom";
+import { AllApi } from "../CommonApiContainer/AllApi";
 
 const Setting = () => {
   const { user = {} } = useAuth(); // Default to an empty object
@@ -49,7 +50,7 @@ const Setting = () => {
   else {
   try {
 
-    const responce  = await axios.put("https://employee-backend-last.vercel.app/api/setting" , passwords ,{
+    const responce  = await axios.put(`${AllApi.changePassword.url}` , passwords ,{
       headers : {
         Authorization : `Bearer ${localStorage.getItem("token")}`
       }

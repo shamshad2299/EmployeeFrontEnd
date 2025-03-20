@@ -1,10 +1,10 @@
-const basicUrl  = "https://employee-backend-last.vercel.app";
+ const basicUrl  = "https://employee-backend-last.vercel.app/api";
+// const basicUrl = "http://localhost:5000/api"
 
 export const AllApi = {
 
   //Authentication pannel API calls
   register : {
-
     url : `${basicUrl}/register`,
     method : "post",
    
@@ -122,7 +122,7 @@ export const AllApi = {
   },
   getAllLeaves : {
 
-    url : `${basicUrl}/leaves`,
+    url : `${basicUrl}/leave`,
     method : "get",
    
   },
@@ -140,7 +140,7 @@ export const AllApi = {
   },
 
   //change dynamic dashboard API calls
-  viewLeaves : {
+  dashborad : {
 
     url : `${basicUrl}/dashboard`,
     method : "get",
@@ -154,4 +154,14 @@ export const AllApi = {
     method : "put",
    
   },
+  addSalary : {
+
+    url : `${basicUrl}/employee/salary`,
+    method : "put",
+   
+  },
+  viewSalary : {
+    url : `${basicUrl}/employee/salary`,
+  }
+
 }

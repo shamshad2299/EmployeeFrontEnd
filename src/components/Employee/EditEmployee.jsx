@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import { fetchDataResponce } from '../../pages/utils/EmployeeHelper';
 import { toast } from 'react-toastify';
+import { AllApi } from '../../CommonApiContainer/AllApi';
 
 const EditEmployee = () => {
   
@@ -47,7 +48,7 @@ useEffect(()=>{
   const getPrviousData = async()=>{
     try {
   
-      const getData = await axios.get(`https://employee-backend-last.vercel.app/api/edit-employee/${id}`,{
+      const getData = await axios.get(`${AllApi.editEmployee}${id}`,{
         headers : {
           Authorization : `Bearer ${localStorage.getItem("token")}`
         }
@@ -73,7 +74,7 @@ useEffect(()=>{
    
       try {
     
-        const newEmployee = await axios.post(`https://employee-backend-last.vercel.app/api/finaledit-employee/${id}`,formData, {
+        const newEmployee = await axios.post(`${AllApi.finalEditEmployee/url}/finaledit-employee/${id}`,formData, {
           headers : {
             Authorization : `Bearer ${localStorage.getItem("token")}`
           }
@@ -109,7 +110,7 @@ const formattedDate = `${parts[2]}-${parts[1]?.padStart(2, "0")}-${parts[0]?.pad
       <div className="bg-white p-4 shadow-2xl rounded-md container overflow-x-scroll lg:overflow-auto">
         <h3 className="font-medium text-3xl font-sans p-4">Edit Employee</h3>
     <form  onSubmit={handleSubmit}>
-    <div className="flex w-full max-w-98">
+    <div className="flex w-full max-sm:flex-col">
           <div className="flex flex-col">
             <label className="font-bold mt-6 text-sm ml-4 " htmlFor="em-name">
               Employee Name
@@ -138,8 +139,7 @@ const formattedDate = `${parts[2]}-${parts[1]?.padStart(2, "0")}-${parts[0]?.pad
           </div>
           
         </div>
-        <div className="flex">
-        
+        <div className="flex max-sm:flex-col">
           <div className="flex flex-col">
             <label className="font-bold mt-6 text-sm ml-4 " htmlFor="dob">
               Employee DOB
@@ -154,7 +154,7 @@ const formattedDate = `${parts[2]}-${parts[1]?.padStart(2, "0")}-${parts[0]?.pad
               onChange={hadleChange}
             />
           </div>
-          <div className="flex">
+          <div className="flex max-sm:flex-col">
           <div className="flex flex-col">
             <label className="font-bold mt-6 text-sm ml-4 " htmlFor="role">
               Role
@@ -173,7 +173,7 @@ const formattedDate = `${parts[2]}-${parts[1]?.padStart(2, "0")}-${parts[0]?.pad
         </div>
         </div>
 
-        <div className="flex">
+        <div className="flex max-sm:flex-col">
           <div className="flex flex-col">
             <label className="font-bold mt-6 text-sm ml-4 " htmlFor="gender">
               Employee Gender
@@ -204,7 +204,7 @@ const formattedDate = `${parts[2]}-${parts[1]?.padStart(2, "0")}-${parts[0]?.pad
 
           </div>
         </div>
-        <div className="flex">
+        <div className="flex max-sm:flex-col">
           <div className="flex flex-col">
             <label className="font-bold text-sm ml-4 mt-6" htmlFor="address">
               Address
@@ -233,7 +233,7 @@ const formattedDate = `${parts[2]}-${parts[1]?.padStart(2, "0")}-${parts[0]?.pad
 
           </div>
         </div>
-        <div className="flex ">
+        <div className="flex max-sm:flex-col">
           <div className="flex flex-col">
             <label className="font-bold mt-6 text-sm ml-4 " htmlFor="salary">
               Sallary{" "}

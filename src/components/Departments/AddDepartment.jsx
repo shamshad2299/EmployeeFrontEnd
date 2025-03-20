@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import {useNavigate} from "react-router-dom"
+import { AllApi } from "../../CommonApiContainer/AllApi";
 
 const AddDepartment = () => {
   const [errors , setError] = useState(null);
@@ -25,7 +26,7 @@ const AddDepartment = () => {
 
 
 try {
-  const responce = await axios.post("https://employee-backend-last.vercel.app/api/department",departments ,{
+  const responce = await axios.post(`${AllApi/AddDepartment/url}`,departments ,{
 
     headers : {
     'Authorization' :`Bearer ${localStorage?.getItem('token')}`
@@ -49,7 +50,7 @@ try {
   }
   return (
     <div className="pt-20">
-      <div className="bg-white mx-auto  max-w-3xl w-96 rounded  p-10  shadow-2xl">
+      <div className="bg-white mx-auto  max-w-3xl sm:w-96 w-75 rounded p-10   shadow-2xl">
         <h3 className="text-2xl font-medium text-center mb-10">Add Department</h3>
         <div className="bg-white flex justify-center items-center ">
           
@@ -71,7 +72,7 @@ try {
               <label htmlFor="description" className="text-gray-700">Description</label>
               <textarea
                 name="description"
-                className="border w-80 h-25 mt-1"
+                className="border sm:w-80 w-65 h-25 mt-1"
                 onChange={handleOnChange}
               ></textarea>
             </div>

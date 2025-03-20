@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { AllApi } from "../../CommonApiContainer/AllApi";
 
 const Detail = () => {
   const { id } = useParams();
@@ -13,7 +14,7 @@ const Detail = () => {
   const ViewLeaves = async () => {
     try {
       const responce = await axios.get(
-        `https://employee-backend-last.vercel.app/api/view-leave/${id}`,
+        `${AllApi.viewLeaves.url}/${id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -40,7 +41,7 @@ const Detail = () => {
   const changeStatus = async (id , status)=>{
     try {
       const responce = await axios.put(
-        `https://employee-backend-last.vercel.app/api/change-status/${id}`, {status},
+        `${AllApi.changeLeaveStatus.url}/${id}`, {status},
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

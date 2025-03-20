@@ -23,7 +23,7 @@ const Login = () => {
     };
     try {
       const responce = await axios.post(
-    "https://employee-backend-last.vercel.app/api/login",
+    `${AllApi.login.url}`,
         values
       );
 
@@ -50,7 +50,9 @@ const Login = () => {
         setError(responce.data.message);
       }
     } catch (error) {
+      setError(error.message)
       console.log(error);
+      
     }
    
 

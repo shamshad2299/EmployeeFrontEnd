@@ -10,6 +10,7 @@ import {
 } from "react-icons/fa";
 import SummaryCard from "./Departments/SummaryCard";
 import axios from "axios"
+import { AllApi } from "../CommonApiContainer/AllApi";
 
 const AdminSummary = () => {
 
@@ -17,7 +18,7 @@ const AdminSummary = () => {
  
 
 const getData = async()=>{
-  const responce = await axios.get("https://employee-backend-last.vercel.app/api/dashboard" ,{
+  const responce = await axios.get(`${AllApi.dashborad.url}` ,{
     headers : {
       Authorization : `Bearer ${localStorage.getItem("token")}`
      }

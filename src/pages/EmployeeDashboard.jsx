@@ -7,6 +7,7 @@ import { columns, DepartmentsButton } from "./utils/DepartmentsHelper";
 import { EmployeeButton, employeeColumns } from "./utils/EmployeeHelper";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { AllApi } from "../CommonApiContainer/AllApi";
 
 
 //employee for sallary form
@@ -14,7 +15,7 @@ export const getEmployee = async(id)=>{
  
   let employees;
   try {
-    const responce = await axios.get(`https://employee-backend-last.vercel.app/api/getemployeeby-depId/${id}`,{
+    const responce = await axios.get(`${AllApi.getEmployeeByDepId}/${id}`,{
       headers : {
         Authorization : `Bearer ${localStorage.getItem("token")}`
       }
@@ -54,7 +55,7 @@ const handleClick = ()=>{
     try {
       setEmLoading(true);
       const getEmployeeData = await axios.get(
-        "https://employee-backend-last.vercel.app/api/get-employee",{
+        `${AllApi.getEmployee.url}`,{
           headers : {
             "Authorization" : `Bearer ${localStorage.getItem("token")}`
           }

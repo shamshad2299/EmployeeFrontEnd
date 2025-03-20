@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+
 export const leaveStatus = [
   {
     name: " S NO",
@@ -49,7 +50,8 @@ const navigate = useNavigate();
 
   return (
     <div className="">
-      <button className='bg-teal-600 text-white px-4 py-2 font-bold rounded-md cursor-pointer'
+      <button
+       className='bg-teal-600 text-white px-4 py-2 font-bold rounded-md cursor-pointer'
       onClick={()=>handleView(id)}>View</button>
     </div>
   )

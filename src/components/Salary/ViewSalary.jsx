@@ -4,17 +4,21 @@ import { salaryColumns } from '../../pages/utils/EmployeeHelper'
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../Store/authContext';
+import { AllApi } from '../../CommonApiContainer/AllApi';
+import Loader from '../Loader';
 
 const ViewSalary = () => {
   const {id} = useParams();
   const navigate = useNavigate();
   const {user} = useAuth();
+  const [loading , setLoading] = useState(false);
 
   const [saleries , setSaleries] = useState([]);
 
 const fetchSalary = async()=>{
   try {
-    const responce = await axios.get(`https://employee-backend-last.vercel.app/api/employee/salary/${id}` ,{
+    setLoading(true);
+    const responce = await axios.get(`${AllApi.viewSalary.url}/${id}` ,{
       headers : {
         Authorization : `Bearer ${localStorage.getItem("token")}`
       }
@@ -35,8 +39,10 @@ const fetchSalary = async()=>{
     }
   } catch (error) {
     console.log(error)
+  } finally {
+    setLoading(false)
   }
-}
+} 
 
 useEffect(()=>{
   fetchSalary();
@@ -52,7 +58,7 @@ const handleClick =()=>{
       <div className='flex justify-between pr-10 pb-5'>
       {user?.role === "ADMIN" &&    <button className='ml-10 bg-teal-600 text-white font-bold px-8 py-1 rounded-md cursor-pointer'  onClick={handleClick}>Add Salary</button>} 
         <input className='border-2 border-slate-300 rounded-md px-4 py-1' type="text" placeholder='Search by employee Id ' /></div>
-         < DataTable columns={salaryColumns} data={saleries}></DataTable>
+        { loading ? <div className=' w-full flex justify-center items-center'><Loader/> </div> : < DataTable columns={salaryColumns} data={saleries}></DataTable> }
     </div>
   )
 }

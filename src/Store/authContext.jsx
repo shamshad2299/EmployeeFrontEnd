@@ -1,77 +1,67 @@
 import { createContext, useContext, useEffect, useState } from "react";
-//import {useNavigate} from "react-router-dom"
 import axios from "axios";
-import {toast} from "react-toastify"
-import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
 import { AllApi } from "../CommonApiContainer/AllApi";
 
 const authContext = createContext();
 
 const AuthContextProvider = ({ children }) => {
- 
-  const [user, setuser] = useState(null);
-  const [loading , setLoading] = useState(true);
-
-  //const[viewEmployee, setViewEmployee] = useState(false);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
 
-     const verifyUser = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (token) {
-          setLoading(true);
-          const dataResponce = await axios.get(
-          "https://employee-backend-last.vercel.app/api/verify-user",
-            {
-              headers: {
-                Authorization: `bearer ${token}`,
-              },
-            }
-          );
-        //  console.log(dataResponce);
-          if(dataResponce?.data?.success){
-            setuser(dataResponce?.data?.user);
-            setLoading(false);
-          }
-          else{
-           setuser(null);
-         
-          }
+  const verifyUser = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (token) {
+        setLoading(true);
+        const { data } = await axios.get(AllApi.verifyUser.url, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (data?.success) {
+          setUser(data.user);
+        } else {
+          setUser(null);
+          localStorage.removeItem("token");
         }
-      } catch (error) {
-        console.log(error)
-      } finally{
-        setLoading(false);
+      } else {
+        setUser(null);
       }
-    };
+    } catch (error) {
+      console.error("Verification failed:", error);
+      setUser(null);
+      localStorage.removeItem("token");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-
-    // call the function inSide useEffect hook
-  useEffect(()=>{
-  verifyUser();
-  },[])
- 
+  useEffect(() => {
+    verifyUser();
+  }, [user?._id]);
 
   const login = (backendUser) => {
-    setuser(backendUser);
-
-    
+    if (backendUser?.token) {
+      localStorage.setItem("token", backendUser.token); // Store token
+      setUser(backendUser.user); // Update user state
+    }
   };
+
   const logout = () => {
-
-    setuser(null);
+    setUser(null);
     localStorage.removeItem("token");
-    toast.success("Logout successfully");
-
+    toast.success("Logged out successfully");
 
   };
-
 
   return (
-    <authContext.Provider value={{ user, login, logout,loading }}>
+    <authContext.Provider value={{ user, login, logout, loading }}>
       {children}
     </authContext.Provider>
   );
 };
+
 export const useAuth = () => useContext(authContext);
 export default AuthContextProvider;

@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { getEmployee } from "../../pages/EmployeeDashboard.jsx";
 import { toast } from "react-toastify";
+import { AllApi } from "../../CommonApiContainer/AllApi.js";
 
 const Add = () => {
   //const {id} = useParams();
@@ -39,7 +40,7 @@ const Add = () => {
 
     try {
       const salaryData = await axios.post(
-        "https://employee-backend-last.vercel.app/api/employee/salary",
+        `${AllApi.addSalary.url}`,
         salary,
         {
           headers: {
@@ -74,7 +75,7 @@ const Add = () => {
         Add Employee Salary
       </h3>
       <form onSubmit={handleSubmit}>
-        <div className="flex  mx-w-98">
+        <div className="flex  max-sm:flex-col  mx-w-98">
           <div className="flex flex-col">
             <label className="font-bold mt-6 text-sm ml-4 " htmlFor="name">
               Department
@@ -115,7 +116,7 @@ const Add = () => {
             </select>
           </div>
         </div>
-        <div className="flex">
+        <div className="flex  max-sm:flex-col">
           <div className="flex flex-col">
             <label className="font-bold mt-6 text-sm ml-4 " htmlFor="dob">
               basic Salary
@@ -128,7 +129,7 @@ const Add = () => {
               placeholder="enter salary"
             />
           </div>
-          <div className="flex">
+          <div className="flex  max-sm:flex-col">
             <div className="flex flex-col">
               <label
                 className="font-bold mt-6 text-sm ml-4 "
@@ -148,7 +149,7 @@ const Add = () => {
           </div>
         </div>
 
-        <div className="flex">
+        <div className="flex  max-sm:flex-col">
           <div className="flex flex-col">
             <label
               className="font-bold mt-6 text-sm ml-4 "

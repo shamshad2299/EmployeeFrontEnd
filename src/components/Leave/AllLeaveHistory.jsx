@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import DataTable from 'react-data-table-component'
 import { useParams } from 'react-router-dom';
 import { leaveColumns } from '../../pages/utils/EmployeeHelper';
+import { AllApi } from '../../CommonApiContainer/AllApi';
 
 const AllLeaveHistory = () => {
   const {id} = useParams();
@@ -12,7 +13,7 @@ const AllLeaveHistory = () => {
   useEffect(() => {
     const getLeaves = async()=>{
    
-      const responce = await axios.get(`https://employee-backend-last.vercel.app/api/getLeave/${id}`,   {
+      const responce = await axios.get(`${AllApi.getLeaveById.url}/${id}`,   {
         headers : {
           Authorization :`Bearer ${localStorage.getItem("token")}`
         }

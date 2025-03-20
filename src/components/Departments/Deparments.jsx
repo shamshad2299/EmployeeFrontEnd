@@ -6,6 +6,7 @@ import {
   DepartmentsButton,
 } from "../../pages/utils/DepartmentsHelper";
 import axios from "axios";
+import { AllApi } from "../../CommonApiContainer/AllApi";
 
 const Deparments = () => {
   const [departments, setDepartments] = useState([]);
@@ -16,7 +17,7 @@ const Deparments = () => {
   const fetchDataResponce = async () => {
     try {
       const getDepartmentRes = await axios.get(
-        "https://employee-backend-last.vercel.app/api/getdep",
+        `${AllApi.getDepartment.url}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -69,7 +70,7 @@ const Deparments = () => {
       <div className="text-2xl font-bold flex justify-center items-center pt-6 ">
         Manage Departments
       </div>
-      <div className="flex justify-between mr-4 pt-6">
+      <div className="flex sm:justify-between mr-4 pt-6 max-sm:flex-col max-sm:gap-10 max-sm:w-full max-sm:items-center">
         <input
           type="text"
           placeholder="Search by dep name"
@@ -85,7 +86,7 @@ const Deparments = () => {
       </div>
 
       <div className="mt-10 container max-w-[calc(80vw-100px)] mx-auto">
-        <DataTable columns={columns} data={filterDepartmentData} pagination />
+        <DataTable columns={columns} data={filterDepartmentData} pagination  className="bg-red-500"/>
       </div>
     </div>
   );

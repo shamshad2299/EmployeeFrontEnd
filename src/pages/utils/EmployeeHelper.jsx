@@ -2,6 +2,7 @@ import axios from "axios";
 import React from "react";
 import { Alignment } from "react-data-table-component";
 import { useNavigate } from "react-router-dom";
+import { AllApi } from "../../CommonApiContainer/AllApi";
 
 export const fetchDataResponce = async () => {
 
@@ -9,7 +10,7 @@ export const fetchDataResponce = async () => {
 
   try {
     const getDepartmentRes = await axios.get(
-      "https://employee-backend-last.vercel.app/api/getdep",{
+      `${AllApi.getDepartment}`,{
         headers : {
           "Authorization" : `Bearer ${localStorage.getItem("token")}`
         }

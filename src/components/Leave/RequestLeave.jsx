@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useAuth } from "../../Store/authContext";
+import { AllApi } from "../../CommonApiContainer/AllApi";
 const RequestLeave = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -38,7 +39,7 @@ const RequestLeave = () => {
 
     try {
       const responce = await axios.post(
-        "https://employee-backend-last.vercel.app/api/leave/applied",
+        `${AllApi.leaveApplied.url}`,
         leavApplied,
         {
           headers: {
@@ -62,7 +63,7 @@ const RequestLeave = () => {
   };
 
   return (
-    <div className="bg-white lg:w-175  xl:w-240  md:w-170 md:mx-auto h-132 p-4 mx-10 my-10 shadow-md rounded-md overflow-x-hidden">
+    <div className="bg-white lg:w-175  xl:w-240  md:w-170 md:mx-auto  p-4 mx-10 my-10 shadow-md rounded-md overflow-x-hidden">
       <h3 className="text-2xl font-bold ">Request for a leave</h3>
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col w-full gap-2 pt-4">
