@@ -1,11 +1,12 @@
 import React from "react";
 import { useAuth } from "../Store/authContext";
 import { Outlet } from "react-router-dom";
+import Loader from "./Loader";
 
 const NavBar = () => {
   const { user, logout } = useAuth();
   return (
-    <div className="lg:w-[calc(100vw-240px)] lg:ml-60 w-screen ">
+    !user ?  <div className="w-full bg-yellow-200 flex justify-center items-center h-full"><Loader></Loader></div> : <div className="lg:w-[calc(100vw-240px)] lg:ml-60 w-screen ">
       <div className="flex h-14 bg-teal-600 lg:w-[calc(100vw-240px)] justify-between items-center w-screen">
         <p className="text-white font-medium flex gap-10 lg:pl-4 pl-20">
           <span>Welcome</span> {user.name}

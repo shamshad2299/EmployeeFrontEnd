@@ -5,6 +5,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import {  useNavigate } from "react-router-dom";
 import { AllApi } from "../CommonApiContainer/AllApi";
+import Loader from "../components/Loader";
 
 const Signup = () => {
   const [name, setName] = useState("");
@@ -12,13 +13,14 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [data, setData] = useState("");
  
-
+const [loading , setLoading] = useState(false);
 
 
   const handleOnSubmit = async (e) => {
     e.preventDefault();
 
     try {
+      setLoading(true)
       const responce = await axios.post(
        `${AllApi.register.url}`, 
         { name ,email ,password}
@@ -28,14 +30,19 @@ const Signup = () => {
       
      //error handelling
       if(data.success){
+        setLoading(false)
         toast.success(data.message);
         Navigate("/login")
+
       }
       else if(data.error){
         toast.error(data.message);
+        setLoading(true)
       }
     } catch (error) {
       console.log(error);
+    } finally{
+      setLoading(false)
     }
   };
 
@@ -45,7 +52,7 @@ const Signup = () => {
     Navigate("/login")
   }
   return (
-    <div className="bg-gradient-to-b from-teal-600 from-50% to-gray-200 to-50% flex justify-center items-center space-y-6 flex-col w-full h-screen">
+    loading ?  <div className="w-full bg-yellow-200 flex justify-center items-center h-screen"><Loader></Loader></div> :   <div className="bg-gradient-to-b from-teal-600 from-50% to-gray-200 to-50% flex justify-center items-center space-y-6 flex-col w-full h-screen">
       <h1 className="font-Pacific text-3xl text-white">
         Employee management System
       </h1>

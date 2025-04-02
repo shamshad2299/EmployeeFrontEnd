@@ -4,10 +4,12 @@ import { toast } from "react-toastify";
 import { useAuth } from "../Store/authContext";
 import { useNavigate } from "react-router-dom";
 import { AllApi } from "../CommonApiContainer/AllApi";
+import Loader from "./Loader";
 
 const Setting = () => {
   const { user = {} } = useAuth(); // Default to an empty object
   const [error, setError] = useState(null);
+  const [loading ,setLoading] = useState(false);
   const navigate = useNavigate();
   const [passwords, setPassword] = useState({
     userId: user?._id,
@@ -29,7 +31,7 @@ const Setting = () => {
   
   
   if (!passwords) {
-    return <div>Loading...</div>; // Render a loading state until user is available
+    return <div><Loader/></div>; // Render a loading state until user is available
   }
 
  const handleChange = (e)=>{
@@ -49,13 +51,13 @@ const Setting = () => {
   }
   else {
   try {
-
+    setLoading(true)
     const responce  = await axios.put(`${AllApi.changePassword.url}` , passwords ,{
       headers : {
         Authorization : `Bearer ${localStorage.getItem("token")}`
       }
     })
-    console.log(responce)
+   
    if(responce?.data?.success){
 
     if(responce?.data?.data?.role == "ADMIN"){
@@ -63,13 +65,16 @@ const Setting = () => {
     }
     else{
       navigate("/employee-dashboard");
+     
     }
    
     toast("password updated successfully")
    }
     
   } catch (error) {
-    
+    console.log(error)
+  } finally{
+    setLoading(false)
   }
   }
   
@@ -77,7 +82,7 @@ const Setting = () => {
 
 
   return (
-    <div className="bg-gradient-to-b from-gray-300 from-50% to-teal-600 to-50% flex justify-center items-center  flex-col w-full h-full shadow-md ">
+    loading ?  <div className="w-full bg-yellow-200 flex justify-center items-center h-full"><Loader></Loader></div> :  <div className="bg-gradient-to-b from-gray-300 from-50% to-teal-600 to-50% flex justify-center items-center  flex-col w-full h-full shadow-md ">
       <div className=" shadow-lg rounded-sm p-6 lg:w-100 bg-white">
         <h1 className="font-Pacific text-2xl pb-4  font-bold">
           Change Password

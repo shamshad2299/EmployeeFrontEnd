@@ -1,19 +1,31 @@
 import React, { useEffect, useState } from "react";
-import {
-  fetchDataResponce,
-  leaveColumns,
-} from "../../pages/utils/EmployeeHelper";
+
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useAuth } from "../../Store/authContext";
 import { AllApi } from "../../CommonApiContainer/AllApi";
+import Loader from "../Loader";
 const RequestLeave = () => {
-  const { user } = useAuth();
+  const { user ,department} = useAuth();
   const navigate = useNavigate();
   const [leavApplied, setLeaveApplied] = useState({
     userId: user?._id,
   });
+
+  const [dep , setDep] = useState([]);
+
+  //fetch department from store
+
+  useEffect(()=>{
+if(department){
+ setDep(department);
+}
+
+  },[department])
+
+  console.log(dep)
+  const [loading , setLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -21,7 +33,7 @@ const RequestLeave = () => {
     }
   }, [user]);
 
-  console.log(leavApplied);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setLeaveApplied((prev) => {
@@ -38,6 +50,7 @@ const RequestLeave = () => {
     e.preventDefault();
 
     try {
+      setLoading(true)
       const responce = await axios.post(
         `${AllApi.leaveApplied.url}`,
         leavApplied,
@@ -48,22 +61,26 @@ const RequestLeave = () => {
         }
       );
       if (responce?.data?.success) {
+        setLoading(false)
         setLeaveApplied(responce?.data?.data);
         navigate("/employee-dashboard/leaves/:id");
         toast.success("leave applied");
       }
       if (responce?.data?.error) {
+        setLoading(true)
         toast.error(responce?.data?.message);
       }
     } catch (error) {
       console.log(error);
+    } finally{
+      setLoading(false)
     }
 
     // backend API call
   };
 
   return (
-    <div className="bg-white lg:w-175  xl:w-240  md:w-170 md:mx-auto  p-4 mx-10 my-10 shadow-md rounded-md overflow-x-hidden">
+    loading ?  <div className="w-full bg-yellow-200 flex justify-center items-center h-full"><Loader></Loader></div> :<div className="bg-white lg:w-175  xl:w-240  md:w-170 md:mx-auto  p-4 mx-10 my-10 shadow-md rounded-md overflow-x-hidden">
       <h3 className="text-2xl font-bold ">Request for a leave</h3>
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col w-full gap-2 pt-4">

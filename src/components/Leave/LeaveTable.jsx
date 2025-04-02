@@ -3,6 +3,7 @@ import DataTable from "react-data-table-component";
 import { LeaveButton, leaveStatus } from "../../pages/utils/LeaveHelper";
 import axios from "axios"
 import { AllApi } from "../../CommonApiContainer/AllApi";
+import Loader from "../Loader";
 const LeaveTable = () => {
   const [data, setData] = useState([
     {
@@ -17,9 +18,11 @@ const LeaveTable = () => {
     },
   ]);
   const [filerData , setFilterData] = useState();
+  const [loading , setLoading] = useState(false);
 
   const fetchDataResponce = async () => {
     try {
+      setLoading(true)
       const responce = await axios.get(
        ` ${AllApi.getAllLeaves.url}`,
         {
@@ -31,6 +34,7 @@ const LeaveTable = () => {
 
     
       if (responce.data.success) {
+        setLoading(false)
         let sno = 1;
         const finalData = await responce.data.leaves.map((leave) => ({
           id: leave._id,
@@ -50,9 +54,14 @@ const LeaveTable = () => {
       setData(finalData);
       setFilterData(finalData);
       }
+      else{
+        setLoading(true)
+      }
 
     } catch (error) {
       console.log(error);
+    } finally{
+      setLoading(false)
     }
   };
 
@@ -74,7 +83,7 @@ const LeaveTable = () => {
   }
 
   return (
-    <div>
+    loading ?  <div className="w-full bg-yellow-200 flex justify-center items-center h-full"><Loader></Loader></div> : <div>
       <h3 className="text-3xl font-semibold text-center pb-5 pt-5">
         Manage Leaves
       </h3>

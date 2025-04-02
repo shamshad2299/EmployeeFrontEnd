@@ -3,9 +3,11 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 import {useNavigate} from "react-router-dom"
 import { AllApi } from "../../CommonApiContainer/AllApi";
+import Loader from "../Loader";
 
 const AddDepartment = () => {
   const [errors , setError] = useState(null);
+  const [loading , setLoading] = useState(false);
   const [departments  , setDepartments] = useState({
     dep_name : " ",
     description : " ",
@@ -26,7 +28,8 @@ const AddDepartment = () => {
 
 
 try {
-  const responce = await axios.post(`${AllApi/AddDepartment/url}`,departments ,{
+  setLoading(true);
+  const responce = await axios.post(`${AllApi.department.url}`,departments ,{
 
     headers : {
     'Authorization' :`Bearer ${localStorage?.getItem('token')}`
@@ -38,6 +41,7 @@ try {
     navigate("/admin/departments")
    }
    if(responce.data.error){
+    setLoading(false);
     toast.error(responce.data.message)
     setError(responce.data.error);
    }
@@ -45,11 +49,13 @@ try {
   
 } catch (error) {
   console.log(error)
+} finally{
+  setLoading(false);
 }
    
   }
   return (
-    <div className="pt-20">
+ loading ? <div className="w-full bg-yellow-200 flex justify-center items-center h-full"><Loader></Loader> </div> :  <div className="pt-20">
       <div className="bg-white mx-auto  max-w-3xl sm:w-96 w-75 rounded p-10   shadow-2xl">
         <h3 className="text-2xl font-medium text-center mb-10">Add Department</h3>
         <div className="bg-white flex justify-center items-center ">

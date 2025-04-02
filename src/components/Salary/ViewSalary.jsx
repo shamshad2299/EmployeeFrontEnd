@@ -25,6 +25,7 @@ const fetchSalary = async()=>{
     })
   
     if(responce.data.success){
+      setLoading(false)
       let sno = 1
      const fianlSalary = await responce.data.salary.map((sal)=>({
       id : sal?._id,
@@ -36,6 +37,9 @@ const fetchSalary = async()=>{
       employeeId : sal?.employeeId?.employeeId,
      }))
     setSaleries(fianlSalary)
+    }
+    else{
+      setLoading(true)
     }
   } catch (error) {
     console.log(error)
@@ -53,7 +57,7 @@ const handleClick =()=>{
 }
 
   return (
-    <div>
+    loading ?  <div className="w-full bg-yellow-200 flex justify-center items-center h-full"><Loader></Loader></div> :   <div>
       <h3 className='text-3xl font-semibold text-center pt-10 pb-10'>Salary History</h3>
       <div className='flex justify-between pr-10 pb-5'>
       {user?.role === "ADMIN" &&    <button className='ml-10 bg-teal-600 text-white font-bold px-8 py-1 rounded-md cursor-pointer'  onClick={handleClick}>Add Salary</button>} 

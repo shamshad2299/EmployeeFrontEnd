@@ -7,15 +7,18 @@ import {
 } from "../../pages/utils/DepartmentsHelper";
 import axios from "axios";
 import { AllApi } from "../../CommonApiContainer/AllApi";
+import Loader from "../Loader";
 
 const Deparments = () => {
   const [departments, setDepartments] = useState([]);
   const [filterDepartmentData, setFilterDepartmentData] = useState([]);
+    const [loading , setLoading] = useState(false);
 
   // delete departments
 
   const fetchDataResponce = async () => {
     try {
+      setLoading(true);
       const getDepartmentRes = await axios.get(
         `${AllApi.getDepartment.url}`,
         {
@@ -23,13 +26,8 @@ const Deparments = () => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }
-      );
 
-      const handleDeleteDepartment = (id) => {
-        const data = departments.filter((val) => val._id !== id);
-        setDepartments(data);
-        fetchDataResponce();
-      };
+      );
 
       if (getDepartmentRes.data.sucess) {
         // setDepartments(getDepartmentRes.data.data);
@@ -48,14 +46,27 @@ const Deparments = () => {
         setDepartments(finalData);
         setFilterDepartmentData(finalData);
       }
+      else{
+        setLoading(false);
+      }
     } catch (error) {
       console.log(error);
+    } finally{
+      setLoading(false);
     }
   };
+
+
 
   useEffect(() => {
     fetchDataResponce();
   }, []);
+
+  const handleDeleteDepartment = (id) => {
+    const data = departments.filter((val) => val._id !== id);
+    setDepartments(data);
+    fetchDataResponce();
+  };
 
   const filterDepartment = (e) => {
     const records = departments.filter((dep) =>
@@ -66,7 +77,7 @@ const Deparments = () => {
   };
 
   return (
-    <div>
+   loading ? <div className="w-full bg-yellow-200 flex justify-center items-center h-full"><Loader/></div>:  <div>
       <div className="text-2xl font-bold flex justify-center items-center pt-6 ">
         Manage Departments
       </div>

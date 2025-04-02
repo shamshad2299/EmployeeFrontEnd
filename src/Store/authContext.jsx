@@ -9,6 +9,7 @@ const authContext = createContext();
 const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+ const  [department , setDepartments] = useState();
 
 
   const verifyUser = async () => {
@@ -43,9 +44,13 @@ const AuthContextProvider = ({ children }) => {
   }, [user?._id]);
 
   const login = (backendUser) => {
-    if (backendUser?.token) {
-      localStorage.setItem("token", backendUser.token); // Store token
-      setUser(backendUser.user); // Update user state
+    if (backendUser) {
+    //  localStorage.setItem("token",tokens); // Store token
+      setUser(backendUser); // Update user state
+    }
+    else{
+      setUser(null);
+      localStorage.removeItem("token");
     }
   };
 
@@ -56,8 +61,40 @@ const AuthContextProvider = ({ children }) => {
 
   };
 
+
+//fetch department
+   const fetchDataResponce = async () => {
+      try {
+        setLoading(true)
+        const response = await axios.get(
+          `${AllApi.getDepartment.url}`,{
+            headers : {
+              "Authorization" : `Bearer ${localStorage.getItem("token")}`
+            }
+          }
+        );
+         if(response.data.sucess){
+          setLoading(false);
+            setDepartments(response?.data?.data);
+
+         }
+        
+      } catch (error) {
+        console.log(error);
+      } finally{
+        setLoading(false);
+      }
+    
+    };
+
+    //call the department function
+    useEffect(()=>{
+      fetchDataResponce();
+    },[user])
+
+
   return (
-    <authContext.Provider value={{ user, login, logout, loading }}>
+    <authContext.Provider value={{ user, login, logout, loading  , fetchDataResponce , department , setDepartments}}>
       {children}
     </authContext.Provider>
   );

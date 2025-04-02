@@ -3,16 +3,19 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AllApi } from "../../CommonApiContainer/AllApi";
+import Loader from "../Loader";
 
 const Detail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   //console.log(id)
   const [leaves, setLeaves] = useState([]);
+  [loading , setLoading] = useState(false);
 
 
   const ViewLeaves = async () => {
     try {
+      setLoading(true);
       const responce = await axios.get(
         `${AllApi.viewLeaves.url}/${id}`,
         {
@@ -23,14 +26,18 @@ const Detail = () => {
       );
 
       if (responce?.data?.success) {
+        setLoading(false);
         setLeaves(responce?.data?.leaves);
         toast.success(responce.data.message);
       }
       if (responce.data.error) {
+        setLoading(true);
         toast.error(responce.data.message);
       }
     } catch (error) {
       console.log(error);
+    } finally{
+        setLoading(false);
     }
   };
 
@@ -40,6 +47,7 @@ const Detail = () => {
 
   const changeStatus = async (id , status)=>{
     try {
+      setLoading(true)
       const responce = await axios.put(
         `${AllApi.changeLeaveStatus.url}/${id}`, {status},
         {
@@ -51,19 +59,23 @@ const Detail = () => {
 
       
      if (responce?.data?.success) {
+      setLoading(false)
       //   setLeaves(responce?.data?.leaves);
           navigate("/admin/leaves")
         toast.success(responce.data.message);
      }
       if (responce.data.error) {
+        setLoading(true)
         toast.error(responce.data.message);
       }
     } catch (error) {
      toast.error(error || "server error");
+    } finally{
+      setLoading(false)
     }
   }
   return (
-    <div className="bg-slate-200 w-full h-full  flex justify-center items-center">
+    loading ?  <div className="w-full bg-yellow-200 flex justify-center items-center h-full"><Loader></Loader></div> : <div className="bg-slate-200 w-full h-full  flex justify-center items-center">
       <div className="container bg-white w-[calc(65vw-100px)] h-[calc(80vh-100px)] pt-12 shadow-sm rounded-md">
         <h3 className="w-fit text-2xl font-bold mx-auto mb-10 ">
           Employee Details

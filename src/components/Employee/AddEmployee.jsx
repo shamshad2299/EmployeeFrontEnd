@@ -1,18 +1,30 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { fetchDataResponce } from "../../pages/utils/EmployeeHelper";
+//import { fetchDataResponce } from "../../pages/utils/EmployeeHelper";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { AllApi } from "../../CommonApiContainer/AllApi";
+import Loader from "../Loader";
+import { useAuth } from "../../Store/authContext";
 
 const AddEmployee = () => {
   const navigate = useNavigate();
-
   const [departments, setDepartments] = useState([]);
   const [formData, setFormData] = useState({});
+  const [loading, setLoading] = useState(false);
+   const [deps , setDep] = useState([]);
+  
+    //fetch department from store
+  const {department} = useAuth();
 
-  //console.log(formData);
+    useEffect(()=>{
+  if(department){
+   setDep(department);
+  }
+  
+    },[department])
 
+  
   const hadleChange = (e) => {
     const { name, value, files } = e.target;
     if (name === "image") {
@@ -22,14 +34,7 @@ const AddEmployee = () => {
     }
   };
 
-  //console.log(departments)
-  useEffect(() => {
-    const getDepartments = async () => {
-      const newDep = await fetchDataResponce();
-      setDepartments(newDep);
-    };
-    getDepartments();
-  }, []);
+ 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,6 +46,7 @@ const AddEmployee = () => {
     //backend Api call
 
     try {
+      setLoading(true);
       const responce = await axios.post(
         `${AllApi.addEmployee.url}`,
         formDataObj,
@@ -52,19 +58,27 @@ const AddEmployee = () => {
       );
 
       if (responce.data.success) {
+        setLoading(false);
         toast.success(responce.data.message);
         navigate("/admin/employee-dashboard");
       }
       if (responce.data.error) {
+        setLoading(true);
         toast.error(responce.data.message);
         //setError(responce.data.error);
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  return (
+  return loading ? (
+    <div className="w-full bg-yellow-200 flex justify-center items-center h-full">
+      <Loader></Loader>{" "}
+    </div>
+  ) : (
     <div className="p-10 ">
       <div className="bg-white p-4 shadow-2xl rounded-md container overflow-x-scroll lg:overflow-auto">
         <h3 className="font-medium text-3xl font-sans p-4">Add New Employee</h3>
@@ -199,7 +213,7 @@ const AddEmployee = () => {
                   className=" px-10 rounded-sm py-3 border lg:w-125 md:w-60 sm:w-40 ml-4 mt-2"
                 >
                   <option value="select">Select Department</option>
-                  {departments?.map((dep) => (
+                  {deps?.map((dep) => (
                     <option key={dep._id} value={dep._id}>
                       {dep.dep_name}
                     </option>

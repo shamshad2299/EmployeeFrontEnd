@@ -8,14 +8,17 @@ import { EmployeeButton, employeeColumns } from "./utils/EmployeeHelper";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { AllApi } from "../CommonApiContainer/AllApi";
+import Loader from "../components/Loader";
 
 
 //employee for sallary form
 export const getEmployee = async(id)=>{
+  
  
   let employees;
   try {
-    const responce = await axios.get(`${AllApi.getEmployeeByDepId}/${id}`,{
+  
+    const responce = await axios.get(`${AllApi.getEmployeeByDepId.url}/${id}`,{
       headers : {
         Authorization : `Bearer ${localStorage.getItem("token")}`
       }
@@ -23,14 +26,13 @@ export const getEmployee = async(id)=>{
 
    // 
     if(responce?.data?.success){
+    
       employees = responce?.data;
-   
-     
     }
     return employees;
   } catch (error) {
     console.log(error)
-  }
+  } 
 
 }
 
@@ -64,7 +66,7 @@ const handleClick = ()=>{
 
       
       if(getEmployeeData.data.success){
-     
+       setEmLoading(false)
         let sno = 1;
         const finalData = await getEmployeeData.data.employees.map((emp)=>({
 
@@ -107,7 +109,7 @@ fetchDataResponce();
   const navigate = useNavigate();
   const { user } = useAuth();
   return (
-    emLoading ? <div>Loading........</div> : <div className="p-6">
+    emLoading ? <div><Loader/></div> : <div className="p-6">
       <div>
         <div>
           <div className="text-2xl font-bold flex justify-center items-center  pt-6 ">

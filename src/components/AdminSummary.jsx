@@ -11,19 +11,29 @@ import {
 import SummaryCard from "./Departments/SummaryCard";
 import axios from "axios"
 import { AllApi } from "../CommonApiContainer/AllApi";
+import Loader from "./Loader";
 
 const AdminSummary = () => {
 
   const [summary ,setSummary] = useState(null);
+  const [loading , setLoading] = useState(false);
  
 
 const getData = async()=>{
+try {
+  setLoading(true);
   const responce = await axios.get(`${AllApi.dashborad.url}` ,{
     headers : {
       Authorization : `Bearer ${localStorage.getItem("token")}`
      }
   })
   setSummary(responce.data);
+  
+} catch (error) {
+  console.log(error)
+} finally{
+  setLoading(false);
+}
 }
 
 useEffect(()=>{
@@ -33,7 +43,7 @@ useEffect(()=>{
 
 
   return (
-    <div>
+    loading ?  <div className="w-full bg-yellow-200 flex justify-center items-center h-full"><Loader></Loader></div> :  <div>
       <h3 className="p-8 font-serif text-2xl font-extrabold">
         Dashboard Overview
       </h3>

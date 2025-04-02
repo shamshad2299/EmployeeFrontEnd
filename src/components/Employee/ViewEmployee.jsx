@@ -3,26 +3,30 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify';
 import { AllApi } from '../../CommonApiContainer/AllApi';
+import Loader from '../Loader';
 
 const ViewEmployee = () => {
 
   const {id} = useParams();
   //console.log(id)
   const [employee , setEmployee] = useState([]);
+  const [loading , setLoading] = useState(false);
 
    const  ViewEmployees = async()=>{
     try {
+      setLoading(true);
       const getData = await axios.get(`${AllApi.viewEmployee.url}/${id}`,{
         headers : {
           Authorization : `Bearer ${localStorage.getItem("token")}`
         }
       });
       if(getData?.data?.success){
-   
+        setLoading(false);
         setEmployee(getData?.data?.employee);
         toast.success(getData.data.message);
       }
       if(getData.data.error){
+        setLoading(true);
         toast.error(getData.data.message);
        
       }
@@ -30,6 +34,8 @@ const ViewEmployee = () => {
     } catch (error) {
      toast.error(getData.data.error);
     
+    }  finally{
+      setLoading(false);
     }
   }
 
@@ -38,7 +44,7 @@ ViewEmployees();
   },[])
 
   return (
-   <div className='bg-slate-200 w-full h-full  flex  justify-center items-center' >
+    loading ? <div className="w-full bg-yellow-200 flex justify-center items-center h-full"><Loader></Loader> </div> : <div className='bg-slate-200 w-full h-full  flex  justify-center items-center' >
      <div className='container bg-white w-[calc(65vw-100px)] max-sm:w-70 max-sm:h-110 h-[calc(80vh-100px)] pt-12 shadow-sm rounded-md'>
       <h3 className='w-fit text-2xl font-bold mx-auto mb-5 '>Employee Details</h3>
     

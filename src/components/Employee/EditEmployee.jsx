@@ -1,15 +1,16 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
-import { fetchDataResponce } from '../../pages/utils/EmployeeHelper';
+///import { fetchDataResponce } from '../../pages/utils/EmployeeHelper';
 import { toast } from 'react-toastify';
 import { AllApi } from '../../CommonApiContainer/AllApi';
+import Loader from '../Loader';
+import { useAuth } from '../../Store/authContext';
 
 const EditEmployee = () => {
   
   const navigate = useNavigate();
   const {id} = useParams();
-  const [departments  , setDepartments] = useState([]);
   const[loading , setLoading] = useState(false);
   const [formData , setFormData] = useState({
     name: "",
@@ -24,42 +25,61 @@ const EditEmployee = () => {
   
   });
 
+
+  const[deps , setDep] = useState([]);
+  const {department} = useAuth();
+
+  //fixing a problem which generated initially at loading state
+  useEffect(()=>{
+    if(department){
+      setDep(department)
+    }
+  } , [department])
+
  
 const hadleChange = (e)=>{
   const {name , value }  = e.target;
     setFormData((prev)=>({...prev , [name] :value}))
 }
 
- //finding Departments
-
-useEffect(()=>{
-
-const getDepartments = async()=>{
-  const newDep =  await fetchDataResponce();
-setDepartments(newDep);
-
-}
-getDepartments();
-},[])
-
-
 //backed api call from this function on the basis of Id'
 useEffect(()=>{
   const getPrviousData = async()=>{
     try {
-  
-      const getData = await axios.get(`${AllApi.editEmployee}${id}`,{
+    setLoading(true);
+      const getData = await axios.get(`${AllApi.editEmployee.url}/${id}`,{
         headers : {
           Authorization : `Bearer ${localStorage.getItem("token")}`
         }
       })
-      //console.log(getData.data.success);
+    
       if(getData?.data?.success){
-        setFormData(getData?.data?.employee);
+        setLoading(false);
+        
+        const newData = getData.data.employee;
+        console.log(newData)
+        setFormData((prev)=>({
+          ...prev ,
+          name :newData.userId?.name,
+          employeeId : newData.employeeId,
+          dob : newData.dob,
+          role : newData.userId?.role ,
+          gender : newData.gender,
+          maritalStatus : newData.maritalStatus,
+          address : newData.address,
+          department : newData.department.dep_name,
+          salary : newData.salary,
+        }))
+       
+      }
+      else{
+        setLoading(true);
       }
       
     } catch (error) {
       console.log(error)
+    } finally{
+      setLoading(false);
     }
   }
   getPrviousData();
@@ -68,35 +88,33 @@ useEffect(()=>{
 
 
 //call the function to find previous data to be updated
-  const handleSubmit =async(e)=>{
 
-    e.preventDefault();
-   
-      try {
-    
-        const newEmployee = await axios.post(`${AllApi.finalEditEmployee/url}/finaledit-employee/${id}`,formData, {
-          headers : {
-            Authorization : `Bearer ${localStorage.getItem("token")}`
-          }
-        })
-        //console.log(newEmployee.data);
-    
-        if(newEmployee.data.success){
-          toast.success(newEmployee?.data?.message);
-          setFormData(newEmployee.data.employee);
-          navigate("/admin/employee-dashboard")
-        }
-        if(newEmployee?.data?.error){
-          toast.error(newEmployee?.data?.message);
-         
-        }
-        
-      } catch (error) {
-        toast.error(error);
-      }
-  
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    setLoading(true); // Set loading to true
+    const newEmployee = await axios.post(`${AllApi.finalEditEmployee.url}/${id}`, formData, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      },
+      timeout: 1000, // Set a timeout of 5 seconds
+    });
+    if (newEmployee.data.success) {
+      setLoading(false);
+      toast.success(newEmployee?.data?.message);
+      navigate("/admin/employee-dashboard");
+    } else {
+      setLoading(true)
+      toast.error(newEmployee?.data?.message);
+    }
+  } catch (error) {
+    console.error("API Error:", error);
+    toast.error(error.message);
+  } finally {
+    setLoading(false); // Set loading to false
   }
-
+};
 
   const inputDate = new Date(formData.dob).toLocaleDateString(); // Your input date
 const parts = inputDate?.split("/"); // Split the date into parts
@@ -105,7 +123,7 @@ const formattedDate = `${parts[2]}-${parts[1]?.padStart(2, "0")}-${parts[0]?.pad
 
 
   return (
-    <div>
+    loading ? <div className="w-full bg-yellow-200 flex justify-center items-center h-full"><Loader></Loader> </div> :   <div>
         <div className="p-10">
       <div className="bg-white p-4 shadow-2xl rounded-md container overflow-x-scroll lg:overflow-auto">
         <h3 className="font-medium text-3xl font-sans p-4">Edit Employee</h3>
@@ -117,9 +135,9 @@ const formattedDate = `${parts[2]}-${parts[1]?.padStart(2, "0")}-${parts[0]?.pad
             </label>
             <input
               className=" px-10 rounded-sm py-3 border lg:w-125 md:w-60 sm:w-40 ml-4 mt-2 "
-              name="em-name"
+              name="name"
               type="text"   
-              value={formData?.userId?.name}
+              value={formData?.name}
               placeholder="enter employee name"
               onChange={hadleChange}
             />
@@ -161,7 +179,7 @@ const formattedDate = `${parts[2]}-${parts[1]?.padStart(2, "0")}-${parts[0]?.pad
             </label>
             <select name="role" id="role"
             onChange={hadleChange}
-            value={formData?.userId?.role}
+            value={formData.role}
               className=" px-10 rounded-sm py-3 border lg:w-125 md:w-60 sm:w-40 ml-4 mt-2" >
               <option value="">Select role</option>
               <option value="ADMIN">Admin</option>
@@ -225,10 +243,10 @@ const formattedDate = `${parts[2]}-${parts[1]?.padStart(2, "0")}-${parts[0]?.pad
             </label>
             <select name="department" id="department"  
             onChange={hadleChange}
-            value={formData?.department?.dep_name}
+            value={formData?.department}
             className=" px-10 rounded-sm py-3 border lg:w-125 md:w-60 sm:w-40 ml-4 mt-2">
               <option value="select">Select Department</option>
-              {departments?.map((dep)=><option key={dep?._id} value={dep?._id}>{dep?.dep_name}</option>)}
+              {deps?.map((dep)=><option key={dep?._id} value={dep._id}>{dep?.dep_name}</option>)}
             </select>
 
           </div>
@@ -252,7 +270,7 @@ const formattedDate = `${parts[2]}-${parts[1]?.padStart(2, "0")}-${parts[0]?.pad
           
         </div>
        
-        <button   className=" px-10 rounded-sm py-3 border lg:w-255 md:w-60 sm:w-40 ml-4  bg-teal-700 mt-10 font-bold text-white cursor-pointer ">Edit Employee</button>
+        <button   className=" px-10 rounded-sm py-3 border lg:w-255 md:w-60 sm:w-40 ml-4  bg-teal-700 mt-10 font-bold text-white cursor-pointer " type='submit'>Edit Employee</button>
     </form>
       </div>
     </div>

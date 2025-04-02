@@ -3,12 +3,14 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { AllApi } from '../../CommonApiContainer/AllApi';
+import { useAuth } from '../../Store/authContext';
+import Loader from '../Loader';
 
 const EmployeeProfile = () => {
-  const [secondError,setSecondError] = useState(null);
   const [employee, setEmployees] = useState([]);
   const [loading, setLoading] = useState(false);
   const { id } = useParams(); // Get the id from the URL
+  const {user} = useAuth();
 
   useEffect(() => {
     const ViewEmployees = async () => {
@@ -25,16 +27,18 @@ const EmployeeProfile = () => {
           setEmployees(getData.data.employee);
        
           if(getData.data.employee){
+          
             toast.success(getData.data.message);
           }
           if(!getData.data.employee){
             toast.success("you are not an employee");
+
           }
-
-
+       
         } else if (getData.data.error) {
           toast.error(getData.data.message);
           setSecondError(getData.data.message);
+          setLoading(true)
         }
       } catch (error) {
         toast.error(error.response?.data?.error || 'An error occurred');
@@ -44,12 +48,12 @@ const EmployeeProfile = () => {
     };
 
     ViewEmployees(); // Call the function to fetch employee data
-  }, [id]); // Run the effect when id changes
+  }, [user?._id]); // Run the effect when id changes
 
   return (
     <>
-      {secondError ? (
-        <div>Loading, please wait...</div>
+      {loading ? (
+        <div className="w-full bg-yellow-200 flex justify-center items-center h-full"><Loader/></div>
       ) : employee ? (
         <div className="bg-slate-200 w-full h-screen flex justify-center items-center">
           <div className="container bg-white sm:w-[calc(65vw-100px)] w-75  sm:h-[calc(80vh-100px)] h-110 pt-12 shadow-sm rounded-md">

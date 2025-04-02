@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { fetchDataResponce } from "../../pages/utils/EmployeeHelper.jsx";
+//import { fetchDataResponce } from "../../pages/utils/EmployeeHelper.jsx";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { getEmployee } from "../../pages/EmployeeDashboard.jsx";
 import { toast } from "react-toastify";
 import { AllApi } from "../../CommonApiContainer/AllApi.js";
+import Loader from "../Loader.jsx";
+import { useAuth } from "../../Store/authContext.jsx";
 
 const Add = () => {
   //const {id} = useParams();
@@ -18,8 +20,17 @@ const Add = () => {
     allowance: 0,
     payDate: null,
   });
+  const [loading , setLoading] = useState(false);
+  const {department}  = useAuth();
 
 
+  //fixes issues
+  useEffect(()=>{
+  if(department){
+    setDepartment(department);
+    //console.log(department)
+  }
+  },[department])
 
   const handleChandge = (e) => {
     const { name, value } = e.target;
@@ -27,18 +38,12 @@ const Add = () => {
   };
 
   //for getting departments
-  useEffect(() => {
-    const department = async () => {
-      const fetchDep = await fetchDataResponce();
-      setDepartment(fetchDep);
-    };
-    department();
-  }, []);
-
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
+      setLoading(true)
       const salaryData = await axios.post(
         `${AllApi.addSalary.url}`,
         salary,
@@ -50,24 +55,39 @@ const Add = () => {
       );
     
       if (salaryData.data.success) {
+        setLoading(false)
         toast.success(salaryData.data.message);
        navigate(`/admin/salary/${salaryData.data.data.employeeId}`);
        
       }
+      else{
+        setLoading(true)
+      }
     } catch (error) {
       console.log(error);
+    } finally{
+      setLoading(false)
     }
   };
 
   //get employee by department id
   const handleEmployeeByDep = async (e) => {
-    const emp = await getEmployee(e.target.value);
+
+try {
+  setLoading(true)
+   const emp = await getEmployee(e.target.value);
     setEmployees(emp?.data);
+  
+} catch (error) {
+  console.log(error)
+} finally{
+  setLoading(false)
+}
   };
 
   return (
     <>  
-   <div className="bg-slate-300 h-full">
+   {loading ?  <div className="w-full bg-yellow-200 flex justify-center items-center h-full"><Loader></Loader></div> :  <div className="bg-slate-300 h-full">
   <div className="p-10 ">
     <div className="bg-white p-4 shadow-2xl rounded-md lg:w-220  container mx-auto overflow-x-scroll lg:overflow-auto">
       <h3 className="font-medium text-3xl font-sans p-4">
@@ -92,6 +112,7 @@ const Add = () => {
                 <option key={dep?._id} value={dep?._id}>
                   {dep?.dep_name}
                 </option>
+             
               ))}
             </select>
           </div>
@@ -188,6 +209,7 @@ const Add = () => {
     </div>
   </div>
 </div>
+}
 </>
   );
  

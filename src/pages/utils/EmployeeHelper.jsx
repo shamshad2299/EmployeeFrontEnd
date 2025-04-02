@@ -1,35 +1,9 @@
 import axios from "axios";
-import React from "react";
+import React, { useState } from "react";
 import { Alignment } from "react-data-table-component";
 import { useNavigate } from "react-router-dom";
 import { AllApi } from "../../CommonApiContainer/AllApi";
-
-export const fetchDataResponce = async () => {
-
-  let departments;
-
-  try {
-    const getDepartmentRes = await axios.get(
-      `${AllApi.getDepartment}`,{
-        headers : {
-          "Authorization" : `Bearer ${localStorage.getItem("token")}`
-        }
-      }
-    );
-
-    if(getDepartmentRes.data.sucess){
-      
-      departments = getDepartmentRes?.data?.data;
-
-    }
-  } catch (error) {
-    console.log(error);
-  }
-
-  return departments;
-};
-
-
+import Loader from "../../components/Loader";
 
 export const employeeColumns = [
   {
@@ -167,7 +141,7 @@ export const EmployeeButton = ({id}) => {
 
    }
   return (
-    <div className="flex gap-2 employee-button">
+     <div className="flex gap-2 employee-button">
       <button className="border px-4 py-2 cursor-pointer bg-teal-600 text-white font-semibold rounded-md"
       onClick={handleView}
       >view</button>

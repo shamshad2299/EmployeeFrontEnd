@@ -26,16 +26,17 @@ status : "approved",
     }
   ])
   const [leaveFilter , setLeaveFilter] = useState();
-let userId;
+
   useEffect(() => {
     const getLeaves = async()=>{
       if (!user) {
        return (
-        <div>Loading.......</div>
+        <div><Loader/></div>
        )
       }
       const userId =  user?._id;
       if(!userId){
+        setLoading(true);
         toast.error("userId is undifined");
       }
 
@@ -49,7 +50,7 @@ let userId;
   
       
       if(responce?.data?.success){
-    
+    setLoading(false)
       let sno = 1;
      const finalLeave = await responce?.data?.data?.map((data)=>({
       sno : sno++,
@@ -67,6 +68,9 @@ let userId;
   
       }
       
+      else{
+        setLoading(true)
+      }
      } catch (error) {
       console.log(error);
       
@@ -75,9 +79,7 @@ let userId;
      }
     
     }
-    if (user) {
-     userId = user?._id;
-    }
+   
     getLeaves();
   }, [user]);
   
@@ -94,7 +96,7 @@ const leaves = leaveData.filter((leave)=>leave.status.toLowerCase().includes(e.t
 setLeaveFilter(leaves);
  }
   return (
-  <div>
+    loading ?  <div className="w-full bg-yellow-200 flex justify-center items-center h-full"><Loader></Loader></div> : <div>
     
       <h3 className='text-2xl font-bold pt-5 text-center'>Manage Leave</h3>
       <div className='flex lg:flex-row lg:gap-0 gap-5 flex-col  justify-between pl-5 pr-5 pt-10'>

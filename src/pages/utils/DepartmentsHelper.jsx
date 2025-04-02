@@ -1,6 +1,9 @@
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { AllApi } from "../../CommonApiContainer/AllApi";
+import { useState } from "react";
+import Loader from "../../components/Loader";
 
 
 
@@ -22,7 +25,7 @@ export const columns = [
 
 export const DepartmentsButton = ({ id, handleDeleteDepartment }) => {
   const navigate = useNavigate();
-
+  const [loading , setLoading] = useState(false)
   //console.log(id)
   //edit department 
   const handleEdit = () => {
@@ -34,8 +37,9 @@ const confirm = window.confirm(`Do you want to delete department ?`)
 
  if (confirm){
   try {
+    setLoading(true)
     const responce = await axios.delete(
-      `https://employee-backend-last.vercel.app/api/delete-dep/${id}`,
+      `${AllApi.deleteDepartment.url}/${id}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -44,22 +48,28 @@ const confirm = window.confirm(`Do you want to delete department ?`)
     );
 
     if (responce.data.success) {
+      setLoading(false)
       toast.success(responce.data.message);
       handleDeleteDepartment(id);
       
     }
     if (responce.data.error) {
+      setLoading(true)
       toast.error(responce.data.message);
      
     }
     
 
-  } catch (error) {}
+  } catch (error) {
+    console.log(error)
+  } finally{
+    setLoading(false)
+  }
 };
  }
 
   return (
-    <div className="w-full flex justify-center items-center max-sm:flex-col max-sm:gap-4 ">
+    loading ?  <div className="w-full  flex justify-center items-center h-full"><Loader ></Loader></div> :  <div className="w-full flex justify-center items-center max-sm:flex-col max-sm:gap-4 ">
       <button
         className=" px-6 py-1 rounded-md bg-teal-500 text-white font-semibold cursor-pointer"
         onClick={handleEdit}
