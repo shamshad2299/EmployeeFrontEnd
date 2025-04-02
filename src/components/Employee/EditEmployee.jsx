@@ -98,7 +98,7 @@ const handleSubmit = async (e) => {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`
       },
-      timeout: 1000, // Set a timeout of 5 seconds
+      timeout: 4000, // Set a timeout of 5 seconds
     });
     if (newEmployee.data.success) {
       setLoading(false);
