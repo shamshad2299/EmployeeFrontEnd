@@ -1,5 +1,5 @@
- //const basicUrl  = "https://employee-backend-last.vercel.app/api";
- const basicUrl = "http://localhost:5000/api"
+ const basicUrl  = "https://employee-backend-last.vercel.app/api";
+ //const basicUrl = "http://localhost:5000/api"
 
 export const AllApi = {
 
