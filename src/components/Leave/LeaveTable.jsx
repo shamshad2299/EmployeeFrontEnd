@@ -4,6 +4,7 @@ import { LeaveButton, leaveStatus } from "../../pages/utils/LeaveHelper";
 import axios from "axios"
 import { AllApi } from "../../CommonApiContainer/AllApi";
 import Loader from "../Loader";
+import { AccessDenied } from "./RequestLeave";
 const LeaveTable = () => {
   const [data, setData] = useState([
     {
@@ -19,6 +20,7 @@ const LeaveTable = () => {
   ]);
   const [filerData , setFilterData] = useState();
   const [loading , setLoading] = useState(false);
+  const user = JSON.parse(localStorage.getItem("userId"));
 
   const fetchDataResponce = async () => {
     try {
@@ -82,8 +84,13 @@ const LeaveTable = () => {
   setFilterData(newData);
   }
 
+  if(user.role !== "EMPLOYEE" && user.role !== "ADMIN"){
+    return <AccessDenied />;
+  }
+  
+
   return (
-    loading ?  <div className="w-full bg-yellow-200 flex justify-center items-center h-full"><Loader></Loader></div> : <div>
+    loading ?  <div className="w-full  flex justify-center items-center h-full"><Loader></Loader></div> : <div>
       <h3 className="text-3xl font-semibold text-center pb-5 pt-5">
         Manage Leaves
       </h3>

@@ -26,8 +26,7 @@ export const columns = [
 export const DepartmentsButton = ({ id, handleDeleteDepartment }) => {
   const navigate = useNavigate();
   const [loading , setLoading] = useState(false)
-  //console.log(id)
-  //edit department 
+
   const handleEdit = () => {
     navigate(`/admin/edit-department/${id}`);
   };

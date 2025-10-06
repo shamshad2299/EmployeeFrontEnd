@@ -3,14 +3,14 @@ import DataTable from 'react-data-table-component'
 import { leaveColumns } from '../../pages/utils/EmployeeHelper'
 import { useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
-import {useAuth} from "../../Store/authContext"
 import { toast } from 'react-toastify'
 import { AllApi } from '../../CommonApiContainer/AllApi'
 import Loader from "../../components/Loader"
+import { AccessDenied } from './RequestLeave'
 
 const LeaveList = () => {
  
-  const {user} = useAuth();
+  const user = JSON.parse(localStorage.getItem("userId"));
   const [color , setColor] = useState(null);
   const [loading , setLoading] = useState(false);
   const navigate = useNavigate();
@@ -34,7 +34,8 @@ status : "approved",
         <div><Loader/></div>
        )
       }
-      const userId =  user?._id;
+      const userId =  user?.id;
+   
       if(!userId){
         setLoading(true);
         toast.error("userId is undifined");
@@ -81,7 +82,7 @@ status : "approved",
     }
    
     getLeaves();
-  }, [user]);
+  }, []);
   
 
   const handlenavigate = ()=>{
@@ -95,8 +96,15 @@ const leaves = leaveData.filter((leave)=>leave.status.toLowerCase().includes(e.t
 )
 setLeaveFilter(leaves);
  }
+
+   if(user.role !== "EMPLOYEE" &&  user.role !== "ADMIN"){
+     return <AccessDenied/>;
+   }
+   
+
+
   return (
-    loading ?  <div className="w-full bg-yellow-200 flex justify-center items-center h-full"><Loader></Loader></div> : <div>
+    loading ?  <div className="w-full  flex justify-center items-center h-full"><Loader></Loader></div> : <div>
     
       <h3 className='text-2xl font-bold pt-5 text-center'>Manage Leave</h3>
       <div className='flex lg:flex-row lg:gap-0 gap-5 flex-col  justify-between pl-5 pr-5 pt-10'>

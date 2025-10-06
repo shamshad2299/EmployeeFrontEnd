@@ -1,7 +1,7 @@
-import React from 'react'
-import NavBar from './NavBar';
-import { Outlet } from 'react-router-dom';
-import EmployeeSideBar from "./EmployeeSideBar"
+
+import NavBar from "./NavBar";
+import { Outlet } from "react-router-dom";
+import EmployeeSideBar from "./EmployeeSideBar";
 
 // import {
 //   Chart as ChartJS,
@@ -72,30 +72,20 @@ import EmployeeSideBar from "./EmployeeSideBar"
 //   ],
 // };
 
-
-
-
-
 const Employee_Dashboard = () => {
 
-  const xValues = ["Italy", "France", "Spain", "USA", "Argentina"];
-const yValues = [55, 49, 44, 24, 15];
-const barColors = ["red", "green","blue","orange","brown"];
-
   return (
-    <div className='flex '>
-      <EmployeeSideBar/>
-      <div> 
-        <NavBar/>
-       <div className='bg-slate-200 h-[calc(100vh-54px)] pl-2 pt-2 lg:ml-60  '> 
-        {/* render all the child components */}
-        <Outlet/>
-     
-
-       </div>
+    <div className="flex ">
+      <EmployeeSideBar />
+      <div className="lg:ml-7">
+        <NavBar />
+        <div className="bg-slate-200 h-screen lg:ml-65 pt-20 pl-4 lg:w-[calc(100vw-310px)] ">
+          {/* render all the child components */}
+          <Outlet />
         </div>
+      </div>
     </div>
-  )
-}
+  );
+};
 
 export default Employee_Dashboard;

@@ -10,7 +10,7 @@ const Detail = () => {
   const navigate = useNavigate();
   //console.log(id)
   const [leaves, setLeaves] = useState([]);
-  [loading , setLoading] = useState(false);
+ const  [loading , setLoading] = useState(false);
 
 
   const ViewLeaves = async () => {
@@ -75,7 +75,7 @@ const Detail = () => {
     }
   }
   return (
-    loading ?  <div className="w-full bg-yellow-200 flex justify-center items-center h-full"><Loader></Loader></div> : <div className="bg-slate-200 w-full h-full  flex justify-center items-center">
+    loading ?  <div className="w-full flex justify-center items-center h-full"><Loader></Loader></div> : <div className="bg-slate-200 w-full h-full  flex justify-center items-center">
       <div className="container bg-white w-[calc(65vw-100px)] h-[calc(80vh-100px)] pt-12 shadow-sm rounded-md">
         <h3 className="w-fit text-2xl font-bold mx-auto mb-10 ">
           Employee Details

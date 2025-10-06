@@ -82,7 +82,7 @@ const Setting = () => {
 
 
   return (
-    loading ?  <div className="w-full bg-yellow-200 flex justify-center items-center h-full"><Loader></Loader></div> :  <div className="bg-gradient-to-b from-gray-300 from-50% to-teal-600 to-50% flex justify-center items-center  flex-col w-full h-full shadow-md ">
+    loading ?  <div className="w-full  flex justify-center items-center h-full"><Loader></Loader></div> :  <div className="bg-gradient-to-b from-gray-300 from-50% to-teal-600 to-50% flex justify-center items-center  flex-col w-full h-full shadow-md ">
       <div className=" shadow-lg rounded-sm p-6 lg:w-100 bg-white">
         <h1 className="font-Pacific text-2xl pb-4  font-bold">
           Change Password

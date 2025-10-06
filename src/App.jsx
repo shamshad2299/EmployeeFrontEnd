@@ -1,5 +1,11 @@
 import "./App.css";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useParams,
+} from "react-router-dom";
 import Login from "./pages/Login";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 import Signup from "./pages/Signup";
@@ -25,6 +31,14 @@ import RequestLeave from "./components/Leave/RequestLeave.jsx";
 import LeaveTable from "./components/Leave/LeaveTable.jsx";
 import Detail from "./components/Leave/Detail.jsx";
 import AllLeaveHistory from "./components/Leave/AllLeaveHistory.jsx";
+import Profile from "./components/Employee/Profile.jsx";
+import PersonalInfo from "./components/EmployeeDashboard/PersenolInfo.jsx";
+import ProfileDocuments from "./components/EmployeeDashboard/ProfileDocument.jsx";
+import Documents from "./components/EmployeeDashboard/Documents.jsx";
+import Performance from "./components/EmployeeDashboard/Performance.jsx";
+import Settings from "./components/EmployeeDashboard/Setting.jsx";
+import RequestForEmployee from "./components/EmployeeDashboard/RequestForEmployee.jsx";
+import RequestedEmp from "./components/Departments/RequestedEmp.jsx";
 
 function App() {
   return (
@@ -45,6 +59,7 @@ function App() {
           >
             <Route index element={<AdminSummary />}></Route>
             <Route path="/admin/departments" element={<Deparments />}></Route>
+              <Route path="/admin/request-emp" element={<RequestedEmp />}></Route>
             <Route path="/admin/leaves" element={<LeaveTable />}></Route>
             <Route path="/admin/leaves/:id" element={<Detail />}></Route>
             <Route
@@ -75,7 +90,7 @@ function App() {
               element={<EditEmployee></EditEmployee>}
             ></Route>
             <Route
-              path="/admin/view-employees/:id"
+              path="/admin/viewemployee/:id"
               element={<ViewEmployee></ViewEmployee>}
             ></Route>
 
@@ -87,28 +102,36 @@ function App() {
           {/* employee Dashboard */}
 
           {/* routing for employee Dashboard */}
-
-          <Route path="/employee-dashboard" element={<Employee_Dashboard />}>
+          <Route
+            path="/employee-dashboard"
+            element={
+              <PrivateRoute>
+                <RoleBaseRouter requiredRole={["EMPLOYEE" ,"GENERAL"]}>
+                  <Employee_Dashboard />
+                </RoleBaseRouter>
+              </PrivateRoute>
+            }
+          >
+            <Route index element={<EmployeeProfile />} /> {/* Default route */}
             <Route
-              path="/employee-dashboard/profile/:id"
-              element={<EmployeeProfile />}
+              path="request"
+              element={<AddEmployee></AddEmployee>}
             ></Route>
+            <Route path="profile/:id" element={<EmployeeProfile />} />
+            <Route path="leaves/:id" element={<LeaveList />} />
+            <Route path="add-new-leave" element={<RequestLeave />} />
+            <Route path="salary/:id" element={<ViewSalary />} />
+            <Route path="setting" element={<Setting />} />
+            <Route path="profile" element={<Profile />} />
             <Route
-              path="/employee-dashboard/leaves/:id"
-              element={<LeaveList />}
-            ></Route>
-            <Route
-              path="/employee-dashboard/add-new-leave"
-              element={<RequestLeave />}
-            ></Route>
-            <Route
-              path="/employee-dashboard/salary/:id"
-              element={<ViewSalary />}
-            ></Route>
-            <Route
-              path="/employee-dashboard/setting"
-              element={<Setting />}
-            ></Route>
+              path="profile/:id/documents"
+              element={<ProfileDocuments />}
+            />
+            <Route path="profile/:id/personal" element={<PersonalInfo />} />
+            <Route path="documents" element={<Documents />} />
+            <Route path="performance" element={<Performance />} />
+            <Route path="settings" element={<Settings />} />
+            
           </Route>
         </Routes>
       </BrowserRouter>

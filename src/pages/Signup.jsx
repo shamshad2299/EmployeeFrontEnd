@@ -8,14 +8,24 @@ import { AllApi } from "../CommonApiContainer/AllApi";
 import Loader from "../components/Loader";
 
 const Signup = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const [formData , setFormData] = useState({
+  name : "",
+  email : "",
+  password : "",
+})
+
+
   const [data, setData] = useState("");
  
 const [loading , setLoading] = useState(false);
 
 
+
+const handler =(e)=>{
+ 
+  setFormData({...formData , [e.target.name]: e.target.value})
+
+}
   const handleOnSubmit = async (e) => {
     e.preventDefault();
 
@@ -23,20 +33,20 @@ const [loading , setLoading] = useState(false);
       setLoading(true)
       const responce = await axios.post(
        `${AllApi.register.url}`, 
-        { name ,email ,password}
+        formData
       );
 
-      setData(responce.data);
+      setData(responce.data.data);
       
      //error handelling
-      if(data.success){
+      if(responce.data.success){
         setLoading(false)
-        toast.success(data.message);
+        toast.success(responce.data.message);
         Navigate("/login")
 
       }
-      else if(data.error){
-        toast.error(data.message);
+      else if(responce.data.error){
+        toast.error(responce.data.message);
         setLoading(true)
       }
     } catch (error) {
@@ -58,9 +68,6 @@ const [loading , setLoading] = useState(false);
       </h1>
       <div className=" shadow-lg rounded-sm p-6 w-80 bg-white ">
         <h2 className="text-2xl font-bold mb-4">SignUp</h2>
-        {
-        data.error
-        }
         <form  onSubmit={handleOnSubmit}>
           <div className="mb-4">
             <div className="">
@@ -70,9 +77,10 @@ const [loading , setLoading] = useState(false);
               <input
                 className="border w-full px-3 py-2"
                 type="name"
+                name="name"
                 placeholder="Enter your Name"
                 autoComplete="username"
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e)=>handler(e)}
               />
               <label className="block text-gray-700" htmlFor="email">
                 Email
@@ -80,9 +88,10 @@ const [loading , setLoading] = useState(false);
               <input
                 className="border w-full px-3 py-2"
                 type="email"
+                name="email"
                 placeholder="Enter your Email"
                   autoComplete="username"
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e)=>handler(e)}
               />
             </div>
             <div className="">
@@ -92,9 +101,10 @@ const [loading , setLoading] = useState(false);
               <input
                 className="border w-full px-3 py-2"
                 type="password"
+                name="password"
                 placeholder="******************"
                   autoComplete="current-password"
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e)=>handler(e)}
               />
             </div>
             <div className="flex mb-4 items-center justify-between mt-4">
