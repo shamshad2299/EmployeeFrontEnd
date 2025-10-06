@@ -37,10 +37,11 @@ const user = JSON.parse(localStorage.getItem("userId"));
   useEffect(() => {
     ViewEmployees();
   }, []);
+  console.log(employee)
 
    useEffect(() => {
     // Show different notices based on conditions
-    if(employee.status === "pending"){
+    if(employee?.status === "pending"){
         showNotice('employeeRequest', 1000);
     }
     else {
@@ -48,7 +49,7 @@ const user = JSON.parse(localStorage.getItem("userId"));
     }
       
    
-  }, [employee.status]);
+  }, [employee?.status]);
 
   if (loading) {
     return (
@@ -149,7 +150,7 @@ const user = JSON.parse(localStorage.getItem("userId"));
                     <FaUserTie className="text-blue-600 mr-2" />
                     <span className="font-semibold">Status:</span>
                     <span className="ml-2 font-bold px-2 py-1 bg-green-200 text-green-800 text-xs rounded-full">
-                      {employee.status}
+                      {employee?.status}
                     </span>
                   </div>
                 </div>
