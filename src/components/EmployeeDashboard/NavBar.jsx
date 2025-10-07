@@ -132,17 +132,7 @@ const NavBar = () => {
         </div>
       </div>
 
-      {/* Mobile Search (hidden on desktop) */}
-      <div className="md:hidden bg-gray-50 px-4 py-2">
-        <div className="flex items-center bg-white rounded-full px-3 py-1 shadow-sm">
-          <FaSearch className="text-gray-500 mr-2" />
-          <input
-            type="text"
-            placeholder="Search..."
-            className="bg-transparent border-none outline-none text-sm w-full"
-          />
-        </div>
-      </div>
+ 
     </div>
   );
 };

@@ -37,7 +37,7 @@ const user = JSON.parse(localStorage.getItem("userId"));
   useEffect(() => {
     ViewEmployees();
   }, []);
-  console.log(employee)
+
 
    useEffect(() => {
     // Show different notices based on conditions
@@ -104,7 +104,7 @@ const user = JSON.parse(localStorage.getItem("userId"));
   
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 py-8 px-4">
+    <div className="min-h-screen  max-md:w-screen w-full py-8 px-4 ">
           {/* <AutoNotice type="welcomeBack" showDelay={100} /> */}
            {NoticeComponent}
       <div className="max-w-6xl mx-auto">

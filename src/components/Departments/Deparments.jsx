@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import DataTable from "react-data-table-component";
-import { FiSearch, FiPlus, FiTrash2, FiEdit2, FiInfo, FiBriefcase } from "react-icons/fi";
+import {
+  FiSearch,
+  FiPlus,
+  FiTrash2,
+  FiEdit2,
+  FiInfo,
+  FiBriefcase,
+} from "react-icons/fi";
 import axios from "axios";
 import { AllApi } from "../../CommonApiContainer/AllApi";
 import Loader from "../Loader";
@@ -15,37 +22,36 @@ const Departments = () => {
   const [viewMode, setViewMode] = useState("table"); // 'table' or 'card'
   const [selectedDepartment, setSelectedDepartment] = useState(null);
 
-
   // Enhanced columns configuration
   const columns = [
     {
       name: "#",
-      selector: row => row.sno,
+      selector: (row) => row.sno,
       sortable: true,
-      width: "70px"
+      width: "70px",
     },
     {
       name: "Department Name",
-      selector: row => row.dep_name,
+      selector: (row) => row.dep_name,
       sortable: true,
-      cell: row => (
+      cell: (row) => (
         <div className="flex items-center">
           <div className="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center mr-3">
             <FiBriefcase className="text-teal-600" />
           </div>
           <span className="font-medium">{row.dep_name}</span>
         </div>
-      )
+      ),
     },
     {
       name: "Employees",
-      selector: row => row.employeeCount || "N/A",
+      selector: (row) => row.employeeCount || "N/A",
       sortable: true,
-      width: "120px"
+      width: "120px",
     },
     {
       name: "Actions",
-      cell: row => (
+      cell: (row) => (
         <div className="flex space-x-2">
           <button
             onClick={() => setSelectedDepartment(row)}
@@ -70,8 +76,8 @@ const Departments = () => {
           </button>
         </div>
       ),
-      width: "150px"
-    }
+      width: "150px",
+    },
   ];
 
   // Fetch department data
@@ -80,10 +86,9 @@ const Departments = () => {
       setLoading(true);
       const response = await axios.get(AllApi.getDepartment.url, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`
-        }
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
-    
 
       if (response.data.sucess) {
         const enrichedData = response.data.data.map((dep, index) => ({
@@ -92,10 +97,10 @@ const Departments = () => {
           dep_name: dep.dep_name,
           description: dep.description,
           department_head: dep.department_head,
-          location : dep.location,
-          created_at: new Date(dep.createdAt).toLocaleDateString()
+          location: dep.location,
+          created_at: new Date(dep.createdAt).toLocaleDateString(),
         }));
-     
+
         setDepartments(enrichedData);
         setFilteredData(enrichedData);
       }
@@ -115,8 +120,8 @@ const Departments = () => {
       try {
         await axios.delete(`${AllApi.deleteDepartment.url}/${id}`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`
-          }
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         });
         toast.success("Department deleted successfully");
         await fetchDepartments();
@@ -129,10 +134,13 @@ const Departments = () => {
 
   const filterDepartments = (e) => {
     const searchTerm = e.target.value.toLowerCase();
-    const filtered = departments.filter(dep =>
-      dep.dep_name.toLowerCase().includes(searchTerm) ||
-      (dep.description && dep.description.toLowerCase().includes(searchTerm)) ||
-      (dep.department_head && dep.department_head.toLowerCase().includes(searchTerm))
+    const filtered = departments.filter(
+      (dep) =>
+        dep.dep_name.toLowerCase().includes(searchTerm) ||
+        (dep.description &&
+          dep.description.toLowerCase().includes(searchTerm)) ||
+        (dep.department_head &&
+          dep.department_head.toLowerCase().includes(searchTerm))
     );
     setFilteredData(filtered);
   };
@@ -147,25 +155,25 @@ const Departments = () => {
         fontWeight: "600",
         fontSize: "0.875rem",
         textTransform: "uppercase",
-        letterSpacing: "0.05em"
-      }
+        letterSpacing: "0.05em",
+      },
     },
     rows: {
       style: {
         minHeight: "72px",
         "&:not(:last-of-type)": {
           borderBottomWidth: "1px",
-          borderColor: "#edf2f7"
-        }
-      }
+          borderColor: "#edf2f7",
+        },
+      },
     },
     pagination: {
       style: {
         backgroundColor: "#f7fafc",
         borderTopWidth: "1px",
-        borderColor: "#e2e8f0"
-      }
-    }
+        borderColor: "#e2e8f0",
+      },
+    },
   };
 
   if (loading) {
@@ -187,16 +195,16 @@ const Departments = () => {
               Manage and organize your company departments
             </p>
           </div>
-          
-          <div className="mt-4 md:mt-0 flex space-x-3">
+
+          <div className="mt-4 md:mt-0 flex space-x-3 max-sm:flex-col gap-3">
             <Link
               to="/admin/add-departments"
-              className="flex items-center px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg shadow-sm transition-colors"
+              className="flex items-center px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg shadow-sm transition-colors w-full"
             >
               <FiPlus className="mr-2" />
               Add Department
             </Link>
-            
+
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <FiSearch className="text-gray-400" />
@@ -262,7 +270,7 @@ const Departments = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredData.map(department => (
+            {filteredData.map((department) => (
               <DepartmentCard
                 key={department.id}
                 department={department}
@@ -280,7 +288,9 @@ const Departments = () => {
             <div className="bg-gradient-to-r from-teal-500 to-teal-700 p-6 text-white">
               <div className="flex justify-between items-start">
                 <div>
-                  <h2 className="text-2xl font-bold">{selectedDepartment.dep_name}</h2>
+                  <h2 className="text-2xl font-bold">
+                    {selectedDepartment.dep_name}
+                  </h2>
                   <p className="text-teal-100">Department Details</p>
                 </div>
                 <button
@@ -291,38 +301,46 @@ const Departments = () => {
                 </button>
               </div>
             </div>
-            
+
             <div className="p-6 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">Department Head</h3>
+                  <h3 className="text-sm font-medium text-gray-500">
+                    Department Head
+                  </h3>
                   <p className="mt-1 text-gray-900">
                     {selectedDepartment.department_head || "Not specified"}
                   </p>
                 </div>
-                
+
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">Employee Count</h3>
+                  <h3 className="text-sm font-medium text-gray-500">
+                    Employee Count
+                  </h3>
                   <p className="mt-1 text-gray-900">
                     {selectedDepartment.employeeCount}
                   </p>
                 </div>
-                
+
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">Created On</h3>
+                  <h3 className="text-sm font-medium text-gray-500">
+                    Created On
+                  </h3>
                   <p className="mt-1 text-gray-900">
                     {selectedDepartment.created_at}
                   </p>
                 </div>
               </div>
-              
+
               <div>
-                <h3 className="text-sm font-medium text-gray-500">Description</h3>
+                <h3 className="text-sm font-medium text-gray-500">
+                  Description
+                </h3>
                 <p className="mt-1 text-gray-900">
                   {selectedDepartment.description || "No description provided"}
                 </p>
               </div>
-              
+
               <div className="pt-4 flex justify-end space-x-3 border-t border-gray-200">
                 <button
                   onClick={() => setSelectedDepartment(null)}

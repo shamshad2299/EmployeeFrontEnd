@@ -19,7 +19,7 @@ const AdminSidebar = () => {
   return (
     <div>
       <div
-        className={`w-8 h-8 absolute m-1 top-2 left-2 cursor-pointer z-4 lg:hidden block `}
+        className={`w-8 h-8  m-1 top-2 left-2 cursor-pointer fixed lg:hidden block z-50 `}
         onClick={handleClick}
       >
         <div className=" bg-black w-8 h-1 m-1"></div>
@@ -31,7 +31,7 @@ const AdminSidebar = () => {
           sideBar ? "block " : "hidden"
         } z-3  h-screen sidebar  fixed`}
       >
-        <h3 className="bg-teal-600 p-2 font-bold text-white font-serif lg:w-60 text-center h-14">
+        <h3 className="bg-teal-600 p-2 font-bold text-white font-serif lg:w-60 text-center h-14 -mt-15">
           {" "}
           Employee MS
         </h3>

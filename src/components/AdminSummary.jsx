@@ -11,7 +11,7 @@ import {
   FaChartLine,
   FaArrowUp,
   FaArrowDown,
-  FaSync
+  FaSync,
 } from "react-icons/fa";
 import SummaryCard from "./Departments/SummaryCard";
 import axios from "axios";
@@ -21,19 +21,26 @@ import Loader from "./Loader";
 const AdminSummary = () => {
   const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [dateRange, setDateRange] = useState({
-    start: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-    end: new Date()
-  });
+  // const [dateRange, setDateRange] = useState({
+  //   start: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+  //   end: new Date(),
+  // });
   const [refreshing, setRefreshing] = useState(false);
+
+   const today = new Date().toISOString().split("T")[0];
+
+    const [dateRange, setDateRange] = useState({
+      start: today,
+      end: today,
+    });
 
   const getData = async () => {
     try {
       setLoading(true);
       const response = await axios.get(`${AllApi.dashborad.url}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`
-        }
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
       setSummary(response.data);
     } catch (error) {
@@ -49,13 +56,6 @@ const AdminSummary = () => {
     getData();
   };
 
-  const handleDateChange = (type, value) => {
-    setDateRange(prev => ({
-      ...prev,
-      [type]: new Date(value)
-    }));
-  };
-
   useEffect(() => {
     getData();
   }, []);
@@ -67,6 +67,14 @@ const AdminSummary = () => {
       </div>
     );
   }
+
+
+  const handleDateChange = (key, value) => {
+    setDateRange((prev) => ({
+      ...prev,
+      [key]: value || today, // if cleared, reset to today
+    }));
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-6 lg:p-8">
@@ -82,26 +90,28 @@ const AdminSummary = () => {
               Real-time insights and analytics for your organization
             </p>
           </div>
-          
+
           <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
             {/* Date Range Picker */}
-            <div className="flex gap-2 bg-white rounded-xl p-3 shadow-sm border border-gray-200">
+            <div className="flex gap-2 max-md:flex-col bg-white rounded-xl p-3 shadow-sm border border-gray-200">
+              {/* Start Date */}
               <div className="flex items-center gap-2">
                 <FaCalendarAlt className="text-gray-400" />
                 <input
                   type="date"
-                  value={dateRange.start.toISOString().split('T')[0]}
-                  onChange={(e) => handleDateChange('start', e.target.value)}
+                  value={dateRange.start}
+                  onChange={(e) => handleDateChange("start", e.target.value)}
                   className="bg-transparent border-none text-sm focus:outline-none text-gray-700"
                 />
-              </div>
-              <span className="text-gray-400">to</span>
+              </div> 
+             <span className="ml-10 bg-gray-200 w-fit p-2 rounded-full text-black/50">to</span>
+              {/* End Date */}
               <div className="flex items-center gap-2">
                 <FaCalendarAlt className="text-gray-400" />
                 <input
                   type="date"
-                  value={dateRange.end.toISOString().split('T')[0]}
-                  onChange={(e) => handleDateChange('end', e.target.value)}
+                  value={dateRange.end}
+                  onChange={(e) => handleDateChange("end", e.target.value)}
                   className="bg-transparent border-none text-sm focus:outline-none text-gray-700"
                 />
               </div>
@@ -113,8 +123,8 @@ const AdminSummary = () => {
               disabled={refreshing}
               className="bg-white hover:bg-gray-50 text-gray-700 px-4 py-3 rounded-xl shadow-sm border border-gray-200 transition-all duration-200 flex items-center gap-2 justify-center disabled:opacity-50"
             >
-              <FaSync className={`${refreshing ? 'animate-spin' : ''}`} />
-              {refreshing ? 'Refreshing...' : 'Refresh'}
+              <FaSync className={`${refreshing ? "animate-spin" : ""}`} />
+              {refreshing ? "Refreshing..." : "Refresh"}
             </button>
           </div>
         </div>
@@ -218,21 +228,41 @@ const AdminSummary = () => {
           {/* Leave Statistics Bar */}
           <div className="mt-8 bg-gray-50 rounded-xl p-6">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="font-semibold text-gray-700">Leave Distribution</h3>
+              <h3 className="font-semibold text-gray-700">
+                Leave Distribution
+              </h3>
               <span className="text-sm text-gray-500">Real-time</span>
             </div>
             <div className="flex h-4 bg-gray-200 rounded-full overflow-hidden">
-              <div 
+              <div
                 className="bg-green-500 transition-all duration-500"
-                style={{ width: `${((summary?.leaveSummary?.approved || 0) / (summary?.leaveSummary?.appliedFor || 1)) * 100}%` }}
+                style={{
+                  width: `${
+                    ((summary?.leaveSummary?.approved || 0) /
+                      (summary?.leaveSummary?.appliedFor || 1)) *
+                    100
+                  }%`,
+                }}
               ></div>
-              <div 
+              <div
                 className="bg-yellow-500 transition-all duration-500"
-                style={{ width: `${((summary?.leaveSummary?.pending || 0) / (summary?.leaveSummary?.appliedFor || 1)) * 100}%` }}
+                style={{
+                  width: `${
+                    ((summary?.leaveSummary?.pending || 0) /
+                      (summary?.leaveSummary?.appliedFor || 1)) *
+                    100
+                  }%`,
+                }}
               ></div>
-              <div 
+              <div
                 className="bg-red-500 transition-all duration-500"
-                style={{ width: `${((summary?.leaveSummary?.rejected || 0) / (summary?.leaveSummary?.appliedFor || 1)) * 100}%` }}
+                style={{
+                  width: `${
+                    ((summary?.leaveSummary?.rejected || 0) /
+                      (summary?.leaveSummary?.appliedFor || 1)) *
+                    100
+                  }%`,
+                }}
               ></div>
             </div>
             <div className="flex justify-between text-xs text-gray-600 mt-2">
@@ -257,7 +287,7 @@ const AdminSummary = () => {
             </div>
           </div>
         </button>
-        
+
         <button className="bg-white hover:bg-gray-50 p-4 rounded-xl shadow-sm border border-gray-200 transition-all duration-200 text-left group">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-blue-100 rounded-lg group-hover:scale-110 transition-transform">
@@ -269,7 +299,7 @@ const AdminSummary = () => {
             </div>
           </div>
         </button>
-        
+
         <button className="bg-white hover:bg-gray-50 p-4 rounded-xl shadow-sm border border-gray-200 transition-all duration-200 text-left group">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-purple-100 rounded-lg group-hover:scale-110 transition-transform">
@@ -287,4 +317,3 @@ const AdminSummary = () => {
 };
 
 export default AdminSummary;
-

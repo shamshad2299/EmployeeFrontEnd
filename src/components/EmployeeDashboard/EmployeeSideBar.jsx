@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../Store/authContext";
 import {
   FaCalendarAlt,
-
   FaMoneyBillAlt,
-
   FaUserCircle,
-  FaHome,
   FaSignOutAlt,
   FaChevronRight,
   FaChevronDown,
@@ -23,6 +20,7 @@ const EmployeeSideBar = () => {
   const [expandedMenu, setExpandedMenu] = useState(null);
   const { user, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
 
   const departmentData = {
@@ -61,6 +59,15 @@ const EmployeeSideBar = () => {
     setExpandedMenu(expandedMenu === menu ? null : menu);
   };
 
+  // Function to handle navigation and close sidebar on mobile
+  const handleNavigation = (path) => {
+    // Close sidebar on mobile after navigation
+    if (window.innerWidth < 1024) {
+      setSideBar(false);
+    }
+    navigate(path);
+  };
+
   const menuItems = [
     {
       name: "Dashboard",
@@ -80,6 +87,7 @@ const EmployeeSideBar = () => {
         {
           name: "Documents",
           path: `/employee-dashboard/profile/${user?._id}/documents`,
+          soon: true
         },
       ],
     },
@@ -104,21 +112,19 @@ const EmployeeSideBar = () => {
           name: "Payslips",
           path: `/employee-dashboard/salary/${user?._id}`,
         },
-        // {
-        //   name: "Tax Documents",
-        //   path: `/employee-dashboard/salary/${user?._id}/tax`,
-        // },
       ],
     },
     {
       name: "Performance",
       path: `/employee-dashboard/performance`,
       icon: <FaChartBar className="text-xl" />,
+      soon: true
     },
     {
       name: "Documents",
       path: `/employee-dashboard/documents`,
       icon: <FaFileAlt className="text-xl" />,
+      soon: true
     },
   ];
 
@@ -133,7 +139,7 @@ const EmployeeSideBar = () => {
   return (
     <>
       {/* Mobile Menu Button */}
-      <div className="lg:hidden fixed top-4 left-4 z-50 ">
+      <div className="lg:hidden fixed top-4 left-4 z-50">
         <button
           onClick={toggleMenu}
           className="p-2 rounded-md bg-white shadow-lg focus:outline-none"
@@ -160,7 +166,7 @@ const EmployeeSideBar = () => {
       <div
         className={`fixed inset-y-0 left-0 transform ${
           sideBar ? "translate-x-0" : "-translate-x-full"
-        } lg:translate-x-0 transition-transform duration-300 ease-in-out z-40 w-70 `}
+        } lg:translate-x-0 transition-transform duration-300 ease-in-out z-40 w-70`}
       >
         <div className="flex flex-col h-full bg-gradient-to-b from-teal-700 to-teal-900 text-white shadow-xl">
           {/* Sidebar Header */}
@@ -221,7 +227,9 @@ const EmployeeSideBar = () => {
                       >
                         <div className="flex items-center space-x-3">
                           <span className="text-indigo-300">{item.icon}</span>
-                          <span>{item.name}</span>
+                          <span className="flex items-center gap-2">
+                            {item.name}
+                          </span>
                         </div>
                         {expandedMenu === item.name ? (
                           <FaChevronDown className="text-xs" />
@@ -233,39 +241,44 @@ const EmployeeSideBar = () => {
                         <ul className="ml-8 mt-1 space-y-1">
                           {item.subItems.map((subItem) => (
                             <li key={subItem.name}>
-                              <NavLink
-                                to={subItem.path}
-                                className={({ isActive }) =>
-                                  `block p-2 rounded-lg transition-colors cursor-pointer ${
-                                    isActive
-                                      ? "bg-indigo-800 text-white"
-                                      : "text-gray-400 hover:bg-gray-700 hover:text-white"
-                                  }`
-                                }
+                              <button
+                                onClick={() => handleNavigation(subItem.path)}
+                                className={`w-full text-left block p-2 rounded-lg transition-colors cursor-pointer ${
+                                  location.pathname === subItem.path
+                                    ? "bg-indigo-800 text-white"
+                                    : "text-gray-400 hover:bg-gray-700 hover:text-white"
+                                }`}
                               >
                                 <span className="flex items-center space-x-2">
                                   <span className="w-1.5 h-1.5 bg-gray-500 rounded-full"></span>
-                                  <span>{subItem.name}</span>
+                                  <span className="flex items-center gap-2">
+                                    {subItem.name}
+                                    {subItem.soon && (
+                                      <span className="text-xs bg-yellow-500 text-white px-1 rounded">Soon</span>
+                                    )}
+                                  </span>
                                 </span>
-                              </NavLink>
+                              </button>
                             </li>
                           ))}
                         </ul>
                       )}
                     </>
                   ) : (
-                    <NavLink
-                      to={item.path}
-                      end={item.exact}
-                      className={({ isActive }) =>
-                        `flex items-center space-x-3 p-3 rounded-lg transition-colors cursor-pointer ${
-                          isActive ? "bg-indigo-700" : "hover:bg-gray-700 "
-                        }`
-                      }
+                    <button
+                      onClick={() => handleNavigation(item.path)}
+                      className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-colors cursor-pointer ${
+                        location.pathname === item.path ? "bg-indigo-700" : "hover:bg-gray-700"
+                      }`}
                     >
                       <span className="text-indigo-300">{item.icon}</span>
-                      <span>{item.name}</span>
-                    </NavLink>
+                      <span className="flex items-center gap-2">
+                        {item.name}
+                        {item.soon && (
+                          <span className="text-xs bg-yellow-500 text-white px-1 rounded">Soon</span>
+                        )}
+                      </span>
+                    </button>
                   )}
                 </li>
               ))}
@@ -273,18 +286,21 @@ const EmployeeSideBar = () => {
           </nav>
 
           {/* Sidebar Footer */}
-          <div className="p-4 border-t border-gray-700">
-            <NavLink
-              to="/employee-dashboard/settings"
-              className={({ isActive }) =>
-                `flex items-center space-x-3 p-3 rounded-lg transition-colors ${
-                  isActive ? "bg-gray-700" : "hover:bg-gray-700 cursor-pointer"
-                }`
-              }
+          <div className="p-4 border-t border-gray-700 space-y-2">
+            <button
+              onClick={() => handleNavigation("/employee-dashboard/settings")}
+              className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-colors cursor-pointer ${
+                location.pathname === "/employee-dashboard/settings" 
+                  ? "bg-gray-700" 
+                  : "hover:bg-gray-700"
+              }`}
             >
               <MdSettings className="text-xl text-gray-400" />
-              <span>Settings</span>
-            </NavLink>
+              <span className="flex items-center gap-2">
+                Settings
+                <span className="text-xs bg-yellow-500 text-white px-1 rounded">Soon</span>
+              </span>
+            </button>
             <button
               onClick={logout}
               className="w-full cursor-pointer flex items-center space-x-3 p-3 rounded-lg text-red-400 hover:bg-gray-700 transition-colors"
