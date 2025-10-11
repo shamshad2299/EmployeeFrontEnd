@@ -42,6 +42,7 @@ import {
   AreaChart,
   Area
 } from 'recharts';
+import LoadingSpinner from "../components/common/LoadingSpinner";
 
 const EmployeeDashboard = () => {
   const [employees, setEmployees] = useState([]);
@@ -455,10 +456,12 @@ const EmployeeDashboard = () => {
     },
   };
 
-  if (emLoading) {
+   if (emLoading) {
     return (
-      <div className="flex w-full h-screen items-center justify-center">
-        <Loader/>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          <LoadingSpinner text="Loading allsalary Please wait..." size="lg" />
+        </div>
       </div>
     );
   }

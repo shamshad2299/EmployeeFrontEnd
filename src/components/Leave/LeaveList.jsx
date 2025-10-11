@@ -207,8 +207,13 @@ const LeaveList = () => {
     const getLeaves = async () => {
       if (!user) {
         return (
-          <div className="z-50">
-            <Loader />
+          <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl shadow-xl p-8">
+              <LoadingSpinner
+                text="Loading allsalary Please wait..."
+                size="lg"
+              />
+            </div>
           </div>
         );
       }
@@ -732,7 +737,6 @@ const LeaveList = () => {
               <LoadingSpinner
                 text="Loading Leave Detail Please wait..."
                 size="md"
-                
               />
             </div>
           </div>
