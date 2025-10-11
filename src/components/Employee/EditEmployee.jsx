@@ -1,14 +1,22 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { AllApi } from '../../CommonApiContainer/AllApi';
-import Loader from '../Loader';
-import { useAuth } from '../../Store/authContext';
-import { 
-  FiUser, FiCreditCard, FiCalendar, FiUsers, FiHome, 
-  FiDollarSign, FiBriefcase, FiSave, FiArrowLeft 
-} from 'react-icons/fi';
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import { AllApi } from "../../CommonApiContainer/AllApi";
+import Loader from "../Loader";
+import { useAuth } from "../../Store/authContext";
+import {
+  FiUser,
+  FiCreditCard,
+  FiCalendar,
+  FiUsers,
+  FiHome,
+  FiDollarSign,
+  FiBriefcase,
+  FiSave,
+  FiArrowLeft,
+} from "react-icons/fi";
+import LoadingSpinner from "../common/LoadingSpinner";
 
 const EditEmployee = () => {
   const navigate = useNavigate();
@@ -27,7 +35,7 @@ const EditEmployee = () => {
     maritalStatus: "",
     address: "",
     department: "",
-    salary: ""
+    salary: "",
   });
 
   useEffect(() => {
@@ -38,9 +46,9 @@ const EditEmployee = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: null }));
+      setErrors((prev) => ({ ...prev, [name]: null }));
     }
   };
 
@@ -49,8 +57,10 @@ const EditEmployee = () => {
     if (!formData.name.trim()) newErrors.name = "Name is required";
     if (!formData.employeeId) newErrors.employeeId = "Employee ID is required";
     if (!formData.dob) newErrors.dob = "Date of birth is required";
-    if (!formData.gender || formData.gender === "select") newErrors.gender = "Gender is required";
-    if (!formData.department || formData.department === "select") newErrors.department = "Department is required";
+    if (!formData.gender || formData.gender === "select")
+      newErrors.gender = "Gender is required";
+    if (!formData.department || formData.department === "select")
+      newErrors.department = "Department is required";
     if (!formData.salary) newErrors.salary = "Salary is required";
     if (!formData.role) newErrors.role = "Role is required";
 
@@ -64,16 +74,18 @@ const EditEmployee = () => {
         setLoading(true);
         const response = await axios.get(`${AllApi.editEmployee.url}/${id}`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`
-          }
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         });
-
+        //console.log(response)
         if (response.data.success) {
           const employeeData = response.data.employee;
           // Format the date for the input field
           const dobDate = employeeData.dob ? new Date(employeeData.dob) : null;
-          const formattedDob = dobDate ? dobDate.toISOString().split('T')[0] : '';
-          
+          const formattedDob = dobDate
+            ? dobDate.toISOString().split("T")[0]
+            : "";
+    
           setFormData({
             name: employeeData.userId?.name || "",
             employeeId: employeeData.employeeId || "",
@@ -82,8 +94,8 @@ const EditEmployee = () => {
             gender: employeeData.gender || "",
             maritalStatus: employeeData.maritalStatus || "",
             address: employeeData.address || "",
-            department: employeeData.department?.dep_name || "",
-            salary: employeeData.salary || ""
+            department: employeeData.department?._id || "",
+            salary: employeeData.salary || "",
           });
         } else {
           toast.error(response.data.message || "Failed to fetch employee data");
@@ -98,6 +110,7 @@ const EditEmployee = () => {
 
     fetchEmployeeData();
   }, [id]);
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -112,7 +125,7 @@ const EditEmployee = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-          timeout: 5000
+          timeout: 5000,
         }
       );
 
@@ -133,8 +146,10 @@ const EditEmployee = () => {
 
   if (loading) {
     return (
-      <div className="w-full flex justify-center items-center h-screen">
-        <Loader />
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          <LoadingSpinner text="Loading Edited Employee Please wait..." size="lg" />
+        </div>
       </div>
     );
   }
@@ -170,7 +185,10 @@ const EditEmployee = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Employee Name */}
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                  <label
+                    htmlFor="name"
+                    className="block text-sm font-medium text-gray-700 mb-1  items-center"
+                  >
                     <FiUser className="mr-2 text-teal-600" />
                     Employee Name*
                   </label>
@@ -182,16 +200,23 @@ const EditEmployee = () => {
                       type="text"
                       placeholder="John Doe"
                       className={`block w-full px-4 py-3 pl-10 rounded-lg border ${
-                        errors.name ? "border-red-300 focus:ring-red-500" : "border-gray-300 focus:ring-teal-500"
+                        errors.name
+                          ? "border-red-300 focus:ring-red-500"
+                          : "border-gray-300 focus:ring-teal-500"
                       } focus:border-teal-500 shadow-sm focus:ring-2 focus:ring-opacity-50 transition-all`}
                     />
-                    {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
+                    {errors.name && (
+                      <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+                    )}
                   </div>
                 </div>
 
                 {/* Employee ID */}
                 <div>
-                  <label htmlFor="employeeId" className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                  <label
+                    htmlFor="employeeId"
+                    className="block text-sm font-medium text-gray-700 mb-1 flex items-center"
+                  >
                     <FiCreditCard className="mr-2 text-teal-600" />
                     Employee ID*
                   </label>
@@ -203,16 +228,25 @@ const EditEmployee = () => {
                       type="text"
                       placeholder="EMP-001"
                       className={`block w-full px-4 py-3 pl-10 rounded-lg border ${
-                        errors.employeeId ? "border-red-300 focus:ring-red-500" : "border-gray-300 focus:ring-teal-500"
+                        errors.employeeId
+                          ? "border-red-300 focus:ring-red-500"
+                          : "border-gray-300 focus:ring-teal-500"
                       } focus:border-teal-500 shadow-sm focus:ring-2 focus:ring-opacity-50 transition-all`}
                     />
-                    {errors.employeeId && <p className="mt-1 text-sm text-red-600">{errors.employeeId}</p>}
+                    {errors.employeeId && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {errors.employeeId}
+                      </p>
+                    )}
                   </div>
                 </div>
 
                 {/* Date of Birth */}
                 <div>
-                  <label htmlFor="dob" className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                  <label
+                    htmlFor="dob"
+                    className="block text-sm font-medium text-gray-700 mb-1  items-center"
+                  >
                     <FiCalendar className="mr-2 text-teal-600" />
                     Date of Birth*
                   </label>
@@ -224,16 +258,23 @@ const EditEmployee = () => {
                       type="date"
                       max={new Date().toISOString().split("T")[0]}
                       className={`block w-full px-4 py-3 pl-10 rounded-lg border ${
-                        errors.dob ? "border-red-300 focus:ring-red-500" : "border-gray-300 focus:ring-teal-500"
+                        errors.dob
+                          ? "border-red-300 focus:ring-red-500"
+                          : "border-gray-300 focus:ring-teal-500"
                       } focus:border-teal-500 shadow-sm focus:ring-2 focus:ring-opacity-50 transition-all`}
                     />
-                    {errors.dob && <p className="mt-1 text-sm text-red-600">{errors.dob}</p>}
+                    {errors.dob && (
+                      <p className="mt-1 text-sm text-red-600">{errors.dob}</p>
+                    )}
                   </div>
                 </div>
 
                 {/* Role */}
                 <div>
-                  <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                  <label
+                    htmlFor="role"
+                    className="block text-sm font-medium text-gray-700 mb-1 flex items-center"
+                  >
                     <FiUser className="mr-2 text-teal-600" />
                     Role*
                   </label>
@@ -243,20 +284,27 @@ const EditEmployee = () => {
                       value={formData.role}
                       onChange={handleChange}
                       className={`block w-full px-4 py-3 pl-10 rounded-lg border ${
-                        errors.role ? "border-red-300 focus:ring-red-500" : "border-gray-300 focus:ring-teal-500"
+                        errors.role
+                          ? "border-red-300 focus:ring-red-500"
+                          : "border-gray-300 focus:ring-teal-500"
                       } focus:border-teal-500 shadow-sm focus:ring-2 focus:ring-opacity-50 transition-all`}
                     >
                       <option value="">Select role</option>
                       <option value="ADMIN">Admin</option>
                       <option value="GENERAL">General</option>
                     </select>
-                    {errors.role && <p className="mt-1 text-sm text-red-600">{errors.role}</p>}
+                    {errors.role && (
+                      <p className="mt-1 text-sm text-red-600">{errors.role}</p>
+                    )}
                   </div>
                 </div>
 
                 {/* Gender */}
                 <div>
-                  <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                  <label
+                    htmlFor="gender"
+                    className="block text-sm font-medium text-gray-700 mb-1 flex items-center"
+                  >
                     <FiUser className="mr-2 text-teal-600" />
                     Gender*
                   </label>
@@ -266,7 +314,9 @@ const EditEmployee = () => {
                       value={formData.gender}
                       onChange={handleChange}
                       className={`block w-full px-4 py-3 pl-10 rounded-lg border ${
-                        errors.gender ? "border-red-300 focus:ring-red-500" : "border-gray-300 focus:ring-teal-500"
+                        errors.gender
+                          ? "border-red-300 focus:ring-red-500"
+                          : "border-gray-300 focus:ring-teal-500"
                       } focus:border-teal-500 shadow-sm focus:ring-2 focus:ring-opacity-50 transition-all`}
                     >
                       <option value="select">Select Gender</option>
@@ -274,13 +324,20 @@ const EditEmployee = () => {
                       <option value="Female">Female</option>
                       <option value="Other">Other</option>
                     </select>
-                    {errors.gender && <p className="mt-1 text-sm text-red-600">{errors.gender}</p>}
+                    {errors.gender && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {errors.gender}
+                      </p>
+                    )}
                   </div>
                 </div>
 
                 {/* Marital Status */}
                 <div>
-                  <label htmlFor="maritalStatus" className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                  <label
+                    htmlFor="maritalStatus"
+                    className="block text-sm font-medium text-gray-700 mb-1 flex items-center"
+                  >
                     <FiUsers className="mr-2 text-teal-600" />
                     Marital Status
                   </label>
@@ -300,7 +357,10 @@ const EditEmployee = () => {
 
                 {/* Address */}
                 <div>
-                  <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                  <label
+                    htmlFor="address"
+                    className="block text-sm font-medium text-gray-700 mb-1 flex items-center"
+                  >
                     <FiHome className="mr-2 text-teal-600" />
                     Address
                   </label>
@@ -318,33 +378,51 @@ const EditEmployee = () => {
 
                 {/* Department */}
                 <div>
-                  <label htmlFor="department" className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                  <label
+                    htmlFor="department"
+                    className="block text-sm font-medium text-gray-700 mb-1 flex items-center"
+                  >
                     <FiBriefcase className="mr-2 text-teal-600" />
                     Department*
                   </label>
                   <div className="relative">
                     <select
                       name="department"
-                      value={formData.department}
+                      value={formData.department || ""}
                       onChange={handleChange}
                       className={`block w-full px-4 py-3 pl-10 rounded-lg border ${
-                        errors.department ? "border-red-300 focus:ring-red-500" : "border-gray-300 focus:ring-teal-500"
+                        errors.department
+                          ? "border-red-300 focus:ring-red-500"
+                          : "border-gray-300 focus:ring-teal-500"
                       } focus:border-teal-500 shadow-sm focus:ring-2 focus:ring-opacity-50 transition-all`}
                     >
-                      <option value="select">Select Department</option>
-                      {deps?.map((dep) => (
-                        <option key={dep._id} value={dep.dep_name}>
-                          {dep.dep_name}
+                      <option value="">Select Department</option>
+                      {deps?.length > 0 ? (
+                        deps.map((dep) => (
+                          <option key={dep._id} value={dep._id}>
+                            {dep.dep_name}
+                          </option>
+                        ))
+                      ) : (
+                        <option value="" disabled>
+                          Loading departments...
                         </option>
-                      ))}
+                      )}
                     </select>
-                    {errors.department && <p className="mt-1 text-sm text-red-600">{errors.department}</p>}
+                    {errors.department && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {errors.department}
+                      </p>
+                    )}
                   </div>
                 </div>
 
                 {/* Salary */}
                 <div>
-                  <label htmlFor="salary" className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                  <label
+                    htmlFor="salary"
+                    className="block text-sm font-medium text-gray-700 mb-1 flex items-center"
+                  >
                     <FiDollarSign className="mr-2 text-teal-600" />
                     Salary*
                   </label>
@@ -356,10 +434,16 @@ const EditEmployee = () => {
                       type="number"
                       placeholder="50000"
                       className={`block w-full px-4 py-3 pl-10 rounded-lg border ${
-                        errors.salary ? "border-red-300 focus:ring-red-500" : "border-gray-300 focus:ring-teal-500"
+                        errors.salary
+                          ? "border-red-300 focus:ring-red-500"
+                          : "border-gray-300 focus:ring-teal-500"
                       } focus:border-teal-500 shadow-sm focus:ring-2 focus:ring-opacity-50 transition-all`}
                     />
-                    {errors.salary && <p className="mt-1 text-sm text-red-600">{errors.salary}</p>}
+                    {errors.salary && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {errors.salary}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -394,10 +478,18 @@ const EditEmployee = () => {
             </h3>
             <div className="mt-4 text-sm text-gray-600 space-y-2">
               <p>• Keep employee records up-to-date with current information</p>
-              <p>• Ensure department assignments reflect current organizational structure</p>
+              <p>
+                • Ensure department assignments reflect current organizational
+                structure
+              </p>
               <p>• Verify salary information matches employment contracts</p>
-              <p>• Use standardized formats for employee IDs and other identifiers</p>
-              <p>• Regularly review and update employee roles and permissions</p>
+              <p>
+                • Use standardized formats for employee IDs and other
+                identifiers
+              </p>
+              <p>
+                • Regularly review and update employee roles and permissions
+              </p>
             </div>
           </div>
         </div>

@@ -5,19 +5,20 @@ import { toast } from "react-toastify";
 import { AllApi } from "../../CommonApiContainer/AllApi";
 import Loader from "../Loader.jsx";
 import { useAuth } from "../../Store/authContext.jsx";
-import { 
-  FiDollarSign, 
-  FiUser, 
-  FiCalendar, 
-  FiPlus, 
-  FiMinus, 
-  FiBriefcase, 
+import {
+  FiDollarSign,
+  FiUser,
+  FiCalendar,
+  FiPlus,
+  FiMinus,
+  FiBriefcase,
   FiArrowLeft,
   FiCreditCard,
   FiTrendingUp,
   FiAward,
-  FiCheck
+  FiCheck,
 } from "react-icons/fi";
+import LoadingSpinner from "../common/LoadingSpinner.jsx";
 
 const Add = () => {
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ const Add = () => {
     deduction: "",
     allowance: "",
     payDate: "",
-    selectedDepartment: ""
+    selectedDepartment: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -56,27 +57,27 @@ const Add = () => {
   // Form validation
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!salary.selectedDepartment) {
       newErrors.selectedDepartment = "Please select a department";
     }
-    
+
     if (!salary.employeeId) {
       newErrors.employeeId = "Please select an employee";
     }
-    
+
     if (!salary.salary || parseFloat(salary.salary) <= 0) {
       newErrors.salary = "Please enter a valid salary amount";
     }
-    
+
     if (!salary.payDate) {
       newErrors.payDate = "Please select pay date";
     }
-    
+
     if (salary.deduction && parseFloat(salary.deduction) < 0) {
       newErrors.deduction = "Deduction cannot be negative";
     }
-    
+
     if (salary.allowance && parseFloat(salary.allowance) < 0) {
       newErrors.allowance = "Allowance cannot be negative";
     }
@@ -87,24 +88,24 @@ const Add = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setSalary(prev => ({ 
-      ...prev, 
-      [name]: value 
+    setSalary((prev) => ({
+      ...prev,
+      [name]: value,
     }));
-    
+
     // Clear error when user starts typing
     if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: "" }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
   // Get employees by department
   const handleEmployeeByDep = async (e) => {
     const departmentId = e.target.value;
-    setSalary(prev => ({ 
-      ...prev, 
+    setSalary((prev) => ({
+      ...prev,
       selectedDepartment: departmentId,
-      employeeId: "" // Reset employee when department changes
+      employeeId: "", // Reset employee when department changes
     }));
 
     if (!departmentId) {
@@ -123,7 +124,7 @@ const Add = () => {
           },
         }
       );
-      
+
       setEmployees(emp?.data?.data || []);
     } catch (error) {
       console.error("Error fetching employees:", error);
@@ -136,7 +137,7 @@ const Add = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       toast.error("Please fix the errors before submitting");
       return;
@@ -144,21 +145,28 @@ const Add = () => {
 
     try {
       setSubmitting(true);
-      const salaryData = await axios.post(`${AllApi.addSalary.url}`, {
-        ...salary,
-        salary: parseFloat(salary.salary),
-        deduction: parseFloat(salary.deduction) || 0,
-        allowance: parseFloat(salary.allowance) || 0
-      }, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+      const salaryData = await axios.post(
+        `${AllApi.addSalary.url}`,
+        {
+          ...salary,
+          salary: parseFloat(salary.salary),
+          deduction: parseFloat(salary.deduction) || 0,
+          allowance: parseFloat(salary.allowance) || 0,
         },
-      });
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       if (salaryData.data.success) {
         toast.success("💰 Salary added successfully!");
         setSalary(salaryData.data.data);
-        setTimeout(() => navigate(`/admin/salary/${salaryData.data.data.employeeId}`), 1500);
+        setTimeout(
+          () => navigate(`/admin/salary/${salaryData.data.data.employeeId}`),
+          1500
+        );
       } else {
         toast.error(salaryData.data.message || "Failed to add salary");
       }
@@ -180,10 +188,12 @@ const Add = () => {
 
   if (loading && !submitting) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-xl p-8">
-          <Loader />
-          <p className="text-center mt-4 text-gray-600">Loading data...</p>
+          <LoadingSpinner
+            text="Sallary adding Please wait..."
+            size="lg"
+          />
         </div>
       </div>
     );
@@ -194,21 +204,23 @@ const Add = () => {
       <div className="max-w-6xl mx-auto">
         {/* Header Section */}
         <div className="mb-8">
-          <button 
+          <button
             onClick={handleCancel}
             className="flex items-center text-teal-600 hover:text-teal-800 transition-all duration-200 mb-4 group"
           >
             <FiArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />
             <span className="font-semibold">Back to Salary Management</span>
           </button>
-          
+
           <div className="bg-gradient-to-r from-teal-500 to-teal-700 rounded-2xl shadow-2xl p-6 text-white">
             <div className="flex items-center space-x-4">
               <div className="bg-white/20 p-3 rounded-xl">
                 <FiDollarSign className="text-2xl sm:text-3xl" />
               </div>
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold">Add Employee Salary</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold">
+                  Add Employee Salary
+                </h1>
                 <p className="text-teal-100 mt-1 text-sm sm:text-base">
                   Process salary payments with deductions and allowances
                 </p>
@@ -237,8 +249,8 @@ const Add = () => {
                           name="selectedDepartment"
                           value={salary.selectedDepartment}
                           className={`w-full px-4 py-3 rounded-xl border-2 bg-white/50 backdrop-blur-sm transition-all duration-200 ${
-                            errors.selectedDepartment 
-                              ? "border-red-300 focus:ring-2 focus:ring-red-500 focus:border-red-500" 
+                            errors.selectedDepartment
+                              ? "border-red-300 focus:ring-2 focus:ring-red-500 focus:border-red-500"
                               : "border-gray-200 focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                           } shadow-sm appearance-none`}
                         >
@@ -254,7 +266,9 @@ const Add = () => {
                         </div>
                       </div>
                       {errors.selectedDepartment && (
-                        <p className="mt-2 text-sm text-red-600">{errors.selectedDepartment}</p>
+                        <p className="mt-2 text-sm text-red-600">
+                          {errors.selectedDepartment}
+                        </p>
                       )}
                     </div>
 
@@ -270,8 +284,8 @@ const Add = () => {
                           name="employeeId"
                           value={salary.employeeId}
                           className={`w-full px-4 py-3 rounded-xl border-2 bg-white/50 backdrop-blur-sm transition-all duration-200 ${
-                            errors.employeeId 
-                              ? "border-red-300 focus:ring-2 focus:ring-red-500 focus:border-red-500" 
+                            errors.employeeId
+                              ? "border-red-300 focus:ring-2 focus:ring-red-500 focus:border-red-500"
                               : "border-gray-200 focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                           } shadow-sm appearance-none`}
                           disabled={!salary.selectedDepartment}
@@ -279,7 +293,8 @@ const Add = () => {
                           <option value="">Select Employee</option>
                           {getEmployees?.map((emp) => (
                             <option key={emp?._id} value={emp?._id}>
-                              {emp?.employeeId} - {emp?.firstName} {emp?.lastName}
+                              {emp?.employeeId} - {emp?.firstName}{" "}
+                              {emp?.lastName}
                             </option>
                           ))}
                         </select>
@@ -288,11 +303,17 @@ const Add = () => {
                         </div>
                       </div>
                       {errors.employeeId && (
-                        <p className="mt-2 text-sm text-red-600">{errors.employeeId}</p>
+                        <p className="mt-2 text-sm text-red-600">
+                          {errors.employeeId}
+                        </p>
                       )}
-                      {salary.selectedDepartment && getEmployees.length === 0 && !loading && (
-                        <p className="mt-2 text-sm text-amber-600">No employees found in this department</p>
-                      )}
+                      {salary.selectedDepartment &&
+                        getEmployees.length === 0 &&
+                        !loading && (
+                          <p className="mt-2 text-sm text-amber-600">
+                            No employees found in this department
+                          </p>
+                        )}
                     </div>
                   </div>
 
@@ -314,8 +335,8 @@ const Add = () => {
                           min="0"
                           step="0.01"
                           className={`w-full px-4 py-3 rounded-xl border-2 bg-white/50 backdrop-blur-sm transition-all duration-200 ${
-                            errors.salary 
-                              ? "border-red-300 focus:ring-2 focus:ring-red-500 focus:border-red-500" 
+                            errors.salary
+                              ? "border-red-300 focus:ring-2 focus:ring-red-500 focus:border-red-500"
                               : "border-gray-200 focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                           } shadow-sm`}
                         />
@@ -324,7 +345,9 @@ const Add = () => {
                         </div>
                       </div>
                       {errors.salary && (
-                        <p className="mt-2 text-sm text-red-600">{errors.salary}</p>
+                        <p className="mt-2 text-sm text-red-600">
+                          {errors.salary}
+                        </p>
                       )}
                     </div>
 
@@ -344,8 +367,8 @@ const Add = () => {
                           min="0"
                           step="0.01"
                           className={`w-full px-4 py-3 rounded-xl border-2 bg-white/50 backdrop-blur-sm transition-all duration-200 ${
-                            errors.allowance 
-                              ? "border-red-300 focus:ring-2 focus:ring-red-500 focus:border-red-500" 
+                            errors.allowance
+                              ? "border-red-300 focus:ring-2 focus:ring-red-500 focus:border-red-500"
                               : "border-gray-200 focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                           } shadow-sm`}
                         />
@@ -354,7 +377,9 @@ const Add = () => {
                         </div>
                       </div>
                       {errors.allowance && (
-                        <p className="mt-2 text-sm text-red-600">{errors.allowance}</p>
+                        <p className="mt-2 text-sm text-red-600">
+                          {errors.allowance}
+                        </p>
                       )}
                     </div>
 
@@ -374,8 +399,8 @@ const Add = () => {
                           min="0"
                           step="0.01"
                           className={`w-full px-4 py-3 rounded-xl border-2 bg-white/50 backdrop-blur-sm transition-all duration-200 ${
-                            errors.deduction 
-                              ? "border-red-300 focus:ring-2 focus:ring-red-500 focus:border-red-500" 
+                            errors.deduction
+                              ? "border-red-300 focus:ring-2 focus:ring-red-500 focus:border-red-500"
                               : "border-gray-200 focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                           } shadow-sm`}
                         />
@@ -384,7 +409,9 @@ const Add = () => {
                         </div>
                       </div>
                       {errors.deduction && (
-                        <p className="mt-2 text-sm text-red-600">{errors.deduction}</p>
+                        <p className="mt-2 text-sm text-red-600">
+                          {errors.deduction}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -403,14 +430,16 @@ const Add = () => {
                           value={salary.payDate}
                           type="date"
                           className={`w-full px-4 py-3 rounded-xl border-2 bg-white/50 backdrop-blur-sm transition-all duration-200 ${
-                            errors.payDate 
-                              ? "border-red-300 focus:ring-2 focus:ring-red-500 focus:border-red-500" 
+                            errors.payDate
+                              ? "border-red-300 focus:ring-2 focus:ring-red-500 focus:border-red-500"
                               : "border-gray-200 focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                           } shadow-sm`}
                         />
                       </div>
                       {errors.payDate && (
-                        <p className="mt-2 text-sm text-red-600">{errors.payDate}</p>
+                        <p className="mt-2 text-sm text-red-600">
+                          {errors.payDate}
+                        </p>
                       )}
                     </div>
 
@@ -475,20 +504,30 @@ const Add = () => {
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-600">Basic Salary:</span>
-                  <span className="font-semibold">${salary.salary || "0.00"}</span>
+                  <span className="font-semibold">
+                    ${salary.salary || "0.00"}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-600">Allowance:</span>
-                  <span className="font-semibold text-green-600">+${salary.allowance || "0.00"}</span>
+                  <span className="font-semibold text-green-600">
+                    +${salary.allowance || "0.00"}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-600">Deduction:</span>
-                  <span className="font-semibold text-red-600">-${salary.deduction || "0.00"}</span>
+                  <span className="font-semibold text-red-600">
+                    -${salary.deduction || "0.00"}
+                  </span>
                 </div>
                 <div className="border-t pt-2">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-semibold text-gray-700">Net Salary:</span>
-                    <span className="font-bold text-blue-700">${netSalary()}</span>
+                    <span className="text-sm font-semibold text-gray-700">
+                      Net Salary:
+                    </span>
+                    <span className="font-bold text-blue-700">
+                      ${netSalary()}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -530,7 +569,9 @@ const Add = () => {
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <span className="text-teal-100">Departments:</span>
-                  <span className="font-bold">{getDepartment?.length || 0}</span>
+                  <span className="font-bold">
+                    {getDepartment?.length || 0}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-teal-100">Employees:</span>

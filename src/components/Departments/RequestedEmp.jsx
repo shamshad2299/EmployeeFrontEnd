@@ -21,6 +21,7 @@ import {
 } from "react-icons/fa";
 import axios from "axios";
 import { AllApi } from "../../CommonApiContainer/AllApi";
+import LoadingSpinner from "../common/LoadingSpinner";
 
 const RequestedEmp = () => {
   const [employees, setEmployees] = useState([]);
@@ -163,13 +164,14 @@ const RequestedEmp = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
+     return (
+       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
+         <div className="bg-white rounded-2xl shadow-xl p-8">
+           <LoadingSpinner text="Loading Requested Employees Please wait..." size="lg" />
+         </div>
+       </div>
+     );
+   }
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 md:p-6 lg:p-8">
       {/* Header Section */}

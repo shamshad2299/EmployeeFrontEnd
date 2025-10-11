@@ -2,13 +2,14 @@ import React from 'react'
 import { useAuth } from '../../Store/authContext'
 import { Navigate } from 'react-router-dom';
 import Loader from '../../components/Loader';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
 
 const PrivateRoute = ({children}) => {
 
   const {user , loading} = useAuth();
 
   if(loading){
-    return <div className='w-full  flex justify-center items-center h-screen'><Loader></Loader></div>
+    return <div className='w-full flex justify-center items-center h-screen'><LoadingSpinner size='xl' fullPage color='dark'/></div>
   }
 
   return user ? children : <Navigate to ="/login" />

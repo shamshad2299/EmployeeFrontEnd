@@ -29,7 +29,7 @@ export const employeeColumns = [
   },
   {
     name: " Department",
-    selector: (row) => row.dep_name,
+    selector: (row) => row.department,
     sortable: true,
       width : "150px",
 

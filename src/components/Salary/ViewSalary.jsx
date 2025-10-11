@@ -6,11 +6,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../Store/authContext";
 import { AllApi } from "../../CommonApiContainer/AllApi";
 import Loader from "../Loader";
-import { 
-  FaMoneyBillWave, 
-  FaSearch, 
-  FaPlus, 
-  FaHistory, 
+import {
+  FaMoneyBillWave,
+  FaSearch,
+  FaPlus,
+  FaHistory,
   FaDownload,
   FaFilter,
   FaChartLine,
@@ -18,10 +18,12 @@ import {
   FaIdCard,
   FaCalendarAlt,
   FaDollarSign,
-  FaReceipt
+  FaReceipt,
+  FaEye,
 } from "react-icons/fa";
 import { MdAttachMoney, MdPayments, MdAccountBalance } from "react-icons/md";
 import { AccessDenied } from "../Leave/RequestLeave";
+import LoadingSpinner from "../common/LoadingSpinner";
 
 const ViewSalary = () => {
   const { id: paramId } = useParams();
@@ -34,9 +36,23 @@ const ViewSalary = () => {
     totalSalary: 0,
     averageSalary: 0,
     totalDeductions: 0,
-    totalAllowances: 0
+    totalAllowances: 0,
   });
-  
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check screen size on component mount and resize
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkScreenSize();
+    window.addEventListener("resize", checkScreenSize);
+
+    return () => {
+      window.removeEventListener("resize", checkScreenSize);
+    };
+  }, []);
 
   // Get appropriate ID based on user role
   const getEmployeeId = () => {
@@ -58,11 +74,14 @@ const ViewSalary = () => {
 
     try {
       setLoading(true);
-      const response = await axios.get(`${AllApi.viewSalary.url}/${employeeId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await axios.get(
+        `${AllApi.viewSalary.url}/${employeeId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       if (response.data.success) {
         let sno = 1;
@@ -77,9 +96,10 @@ const ViewSalary = () => {
           month: sal?.month || "N/A",
           year: sal?.year || new Date().getFullYear(),
           status: sal?.status || "Paid",
-          paymentDate: sal?.paymentDate || new Date().toISOString().split('T')[0]
+          paymentDate:
+            sal?.paymentDate || new Date().toISOString().split("T")[0],
         }));
-        
+
         setSalaries(finalSalary);
         calculateStats(finalSalary);
       }
@@ -93,15 +113,24 @@ const ViewSalary = () => {
   const calculateStats = (salaryData) => {
     if (!salaryData.length) return;
 
-    const totalSalary = salaryData.reduce((sum, item) => sum + (item.salary || 0), 0);
-    const totalDeductions = salaryData.reduce((sum, item) => sum + (item.deduction || 0), 0);
-    const totalAllowances = salaryData.reduce((sum, item) => sum + (item.allowance || 0), 0);
-    
+    const totalSalary = salaryData.reduce(
+      (sum, item) => sum + (item.salary || 0),
+      0
+    );
+    const totalDeductions = salaryData.reduce(
+      (sum, item) => sum + (item.deduction || 0),
+      0
+    );
+    const totalAllowances = salaryData.reduce(
+      (sum, item) => sum + (item.allowance || 0),
+      0
+    );
+
     setStats({
       totalSalary,
       averageSalary: totalSalary / salaryData.length,
       totalDeductions,
-      totalAllowances
+      totalAllowances,
     });
   };
 
@@ -120,9 +149,16 @@ const ViewSalary = () => {
     console.log("Exporting salary data...");
   };
 
-  const filteredSalaries = salaries.filter(salary =>
-    salary.employeeId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    salary.month?.toLowerCase().includes(searchTerm.toLowerCase())
+  const handleViewDetails = (salary) => {
+    // Navigate to salary details or show modal
+    console.log("View salary details:", salary);
+    // You can implement a modal or navigation here
+  };
+
+  const filteredSalaries = salaries.filter(
+    (salary) =>
+      salary.employeeId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      salary.month?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Enhanced columns with custom styling
@@ -130,70 +166,128 @@ const ViewSalary = () => {
     ...salaryColumns,
     {
       name: "Month",
-      selector: row => row.month,
+      selector: (row) => row.month,
       sortable: true,
     },
     {
       name: "Year",
-      selector: row => row.year,
+      selector: (row) => row.year,
       sortable: true,
     },
     {
       name: "Status",
-      selector: row => row.status,
+      selector: (row) => row.status,
       sortable: true,
-      cell: row => (
-        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-          row.status === "Paid" 
-            ? "bg-green-100 text-green-800" 
-            : row.status === "Pending"
-            ? "bg-yellow-100 text-yellow-800"
-            : "bg-red-100 text-red-800"
-        }`}>
+      cell: (row) => (
+        <span
+          className={`px-2 py-1 rounded-full text-xs font-semibold ${
+            row.status === "Paid"
+              ? "bg-green-100 text-green-800"
+              : row.status === "Pending"
+              ? "bg-yellow-100 text-yellow-800"
+              : "bg-red-100 text-red-800"
+          }`}
+        >
           {row.status}
         </span>
-      )
-    }
+      ),
+    },
   ];
 
   // Custom styles for DataTable
   const customStyles = {
     headRow: {
       style: {
-        backgroundColor: '#3B82F6',
-        color: 'white',
-        fontSize: '14px',
-        fontWeight: 'bold',
+        backgroundColor: "#3B82F6",
+        color: "white",
+        fontSize: "14px",
+        fontWeight: "bold",
       },
     },
     rows: {
       style: {
-        fontSize: '13px',
-        '&:hover': {
-          backgroundColor: '#F3F4F6',
-          transition: 'background-color 0.2s ease',
+        fontSize: "13px",
+        "&:hover": {
+          backgroundColor: "#F3F4F6",
+          transition: "background-color 0.2s ease",
         },
       },
     },
     cells: {
       style: {
-        padding: '12px 8px',
+        padding: "12px 8px",
       },
     },
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex justify-center items-center">
-        <Loader />
+  // Mobile Card Component
+  const SalaryCard = ({ salary }) => (
+    <div className="bg-white rounded-lg shadow-md border border-gray-200 p-4 mb-4 hover:shadow-lg transition-shadow duration-300">
+      <div className="flex justify-between items-start mb-3">
+        <div>
+          <h3 className="font-semibold text-gray-900 text-lg">
+            {salary.month} {salary.year}
+          </h3>
+          <p className="text-sm text-gray-600">ID: {salary.employeeId}</p>
+        </div>
+        <span
+          className={`px-3 py-1 rounded-full text-xs font-semibold ${
+            salary.status === "Paid"
+              ? "bg-green-100 text-green-800"
+              : salary.status === "Pending"
+              ? "bg-yellow-100 text-yellow-800"
+              : "bg-red-100 text-red-800"
+          }`}
+        >
+          {salary.status}
+        </span>
       </div>
-    );
-  }
 
-    if(user.role !== "EMPLOYEE" && user.role !== "ADMIN"){
-      return <AccessDenied />;
-    }
-    
+      <div className="grid grid-cols-2 gap-3 mb-4">
+        <div className="text-center p-2 bg-blue-50 rounded-lg">
+          <p className="text-xs text-gray-600">Basic Salary</p>
+          <p className="font-bold text-gray-900">
+            ${salary.salary?.toLocaleString()}
+          </p>
+        </div>
+        <div className="text-center p-2 bg-green-50 rounded-lg">
+          <p className="text-xs text-gray-600">Allowance</p>
+          <p className="font-bold text-gray-900">
+            ${salary.allowance?.toLocaleString()}
+          </p>
+        </div>
+        <div className="text-center p-2 bg-red-50 rounded-lg">
+          <p className="text-xs text-gray-600">Deductions</p>
+          <p className="font-bold text-gray-900">
+            ${salary.deduction?.toLocaleString()}
+          </p>
+        </div>
+        <div className="text-center p-2 bg-purple-50 rounded-lg">
+          <p className="text-xs text-gray-600">Net Pay</p>
+          <p className="font-bold text-gray-900">
+            ${salary.payable?.toLocaleString()}
+          </p>
+        </div>
+      </div>
+
+      <div className="flex justify-between items-center pt-3 border-t border-gray-200">
+        <p className="text-xs text-gray-500">
+          Paid on: {new Date(salary.paymentDate).toLocaleDateString()}
+        </p>
+        <button
+          onClick={() => handleViewDetails(salary)}
+          className="flex items-center gap-1 px-3 py-1 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition-colors"
+        >
+          <FaEye className="text-xs" />
+          Details
+        </button>
+      </div>
+    </div>
+  );
+
+  if (user.role !== "EMPLOYEE" && user.role !== "ADMIN") {
+    return <AccessDenied />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-6 px-4 sm:px-6 lg:px-8">
@@ -205,90 +299,99 @@ const ViewSalary = () => {
               <FaMoneyBillWave className="text-white text-2xl" />
             </div>
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
             Salary History
           </h1>
-          <p className="text-gray-600 text-lg">
+          <p className="text-gray-600 text-base sm:text-lg">
             Comprehensive overview of salary records and payments
           </p>
         </div>
 
         {/* Statistics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-500 hover:shadow-xl transition-all duration-300">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
+          <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 border-l-4 border-blue-500 hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm font-medium">Total Paid</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-xl sm:text-2xl font-bold text-gray-900">
                   ${stats.totalSalary.toLocaleString()}
                 </p>
               </div>
-              <div className="bg-blue-100 p-3 rounded-full">
-                <MdAttachMoney className="text-blue-600 text-xl" />
+              <div className="bg-blue-100 p-2 sm:p-3 rounded-full">
+                <MdAttachMoney className="text-blue-600 text-lg sm:text-xl" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-500 hover:shadow-xl transition-all duration-300">
+          <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 border-l-4 border-green-500 hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm font-medium">Average Salary</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  ${stats.averageSalary.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                <p className="text-gray-600 text-sm font-medium">
+                  Average Salary
+                </p>
+                <p className="text-xl sm:text-2xl font-bold text-gray-900">
+                  $
+                  {stats.averageSalary.toLocaleString(undefined, {
+                    maximumFractionDigits: 2,
+                  })}
                 </p>
               </div>
-              <div className="bg-green-100 p-3 rounded-full">
-                <FaChartLine className="text-green-600 text-xl" />
+              <div className="bg-green-100 p-2 sm:p-3 rounded-full">
+                <FaChartLine className="text-green-600 text-lg sm:text-xl" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-yellow-500 hover:shadow-xl transition-all duration-300">
+          <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 border-l-4 border-yellow-500 hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm font-medium">Total Deductions</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-gray-600 text-sm font-medium">
+                  Total Deductions
+                </p>
+                <p className="text-xl sm:text-2xl font-bold text-gray-900">
                   ${stats.totalDeductions.toLocaleString()}
                 </p>
               </div>
-              <div className="bg-yellow-100 p-3 rounded-full">
-                <FaReceipt className="text-yellow-600 text-xl" />
+              <div className="bg-yellow-100 p-2 sm:p-3 rounded-full">
+                <FaReceipt className="text-yellow-600 text-lg sm:text-xl" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-purple-500 hover:shadow-xl transition-all duration-300">
+          <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 border-l-4 border-purple-500 hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm font-medium">Total Records</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-gray-600 text-sm font-medium">
+                  Total Records
+                </p>
+                <p className="text-xl sm:text-2xl font-bold text-gray-900">
                   {salaries.length}
                 </p>
               </div>
-              <div className="bg-purple-100 p-3 rounded-full">
-                <FaHistory className="text-purple-600 text-xl" />
+              <div className="bg-purple-100 p-2 sm:p-3 rounded-full">
+                <FaHistory className="text-purple-600 text-lg sm:text-xl" />
               </div>
             </div>
           </div>
         </div>
 
         {/* Action Bar */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+        <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 mb-6">
           <div className="flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0">
-            <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
+            <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
               {user?.role === "ADMIN" && (
                 <button
                   onClick={handleAddSalary}
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2"
+                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold px-4 sm:px-6 py-2 sm:py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base"
                 >
                   <FaPlus className="text-sm" />
                   Add New Salary
                 </button>
               )}
-              
+
               <button
                 onClick={handleExport}
-                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2"
+                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold px-4 sm:px-6 py-2 sm:py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base"
               >
                 <FaDownload className="text-sm" />
                 Export Data
@@ -304,90 +407,130 @@ const ViewSalary = () => {
                 placeholder="Search by ID or month..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                className="w-full pl-10 pr-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 text-sm sm:text-base"
               />
             </div>
           </div>
         </div>
 
-        {/* Data Table */}
+        {/* Data Display - Table for Desktop, Cards for Mobile */}
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200">
+          <div className="px-4 sm:px-6 py-4 border-b border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
               <MdPayments className="text-blue-600" />
               Salary Records
+              <span className="text-sm font-normal text-gray-500 ml-2">
+                ({filteredSalaries.length} records)
+              </span>
             </h3>
           </div>
-          
-          {filteredSalaries.length > 0 ? (
-            <DataTable
-              columns={enhancedColumns}
-              data={filteredSalaries}
-              customStyles={customStyles}
-              pagination
-              paginationPerPage={10}
-              paginationRowsPerPageOptions={[5, 10, 15, 20]}
-              highlightOnHover
-              pointerOnHover
-              responsive
-              className="border-none"
-            />
-          ) : (
-            <div className="text-center py-12">
-              <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <FaMoneyBillWave className="text-gray-400 text-2xl" />
+
+          {loading ? (
+            <div className=" bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
+              <div className="bg-white rounded-2xl shadow-xl p-8">
+                <LoadingSpinner
+                  text="Loading allsalary Please wait..."
+                  size="lg"
+                />
               </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                No salary records found
-              </h3>
-              <p className="text-gray-500 mb-4">
-                {searchTerm ? "Try adjusting your search terms" : "No salary records available for this employee"}
-              </p>
-              {user?.role === "ADMIN" && (
-                <button
-                  onClick={handleAddSalary}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition-colors duration-300"
-                >
-                  Add First Salary Record
-                </button>
-              )}
             </div>
+          ) : (
+            <>
+              {filteredSalaries.length > 0 ? (
+                <>
+                  {/* Desktop Table View */}
+                  {!isMobile && (
+                    <DataTable
+                      columns={enhancedColumns}
+                      data={filteredSalaries}
+                      customStyles={customStyles}
+                      pagination
+                      paginationPerPage={10}
+                      paginationRowsPerPageOptions={[5, 10, 15, 20]}
+                      highlightOnHover
+                      pointerOnHover
+                      responsive
+                      className="border-none hidden md:block"
+                    />
+                  )}
+
+                  {/* Mobile Card View */}
+                  {isMobile && (
+                    <div className="p-4 md:hidden">
+                      {filteredSalaries.map((salary) => (
+                        <SalaryCard key={salary.id} salary={salary} />
+                      ))}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="text-center py-12">
+                  <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <FaMoneyBillWave className="text-gray-400 text-2xl" />
+                  </div>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    No salary records found
+                  </h3>
+                  <p className="text-gray-500 mb-4">
+                    {searchTerm
+                      ? "Try adjusting your search terms"
+                      : "No salary records available for this employee"}
+                  </p>
+                  {user?.role === "ADMIN" && (
+                    <button
+                      onClick={handleAddSalary}
+                      className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition-colors duration-300"
+                    >
+                      Add First Salary Record
+                    </button>
+                  )}
+                </div>
+              )}
+            </>
           )}
         </div>
 
         {/* Quick Actions Footer */}
-        <div className="mt-8 bg-white rounded-xl shadow-lg p-6">
+        <div className="mt-8 bg-white rounded-xl shadow-lg p-4 sm:p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
             <FaUserTie className="text-blue-600" />
             Quick Actions
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <button className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all duration-300 group">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <button className="flex items-center gap-3 p-3 sm:p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all duration-300 group">
               <div className="bg-blue-100 p-2 rounded-lg group-hover:bg-blue-200 transition-colors">
-                <FaIdCard className="text-blue-600" />
+                <FaIdCard className="text-blue-600 text-sm sm:text-base" />
               </div>
-              <span className="font-medium text-gray-700">Employee Profile</span>
+              <span className="font-medium text-gray-700 text-sm sm:text-base">
+                Employee Profile
+              </span>
             </button>
-            
-            <button className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-green-500 hover:bg-green-50 transition-all duration-300 group">
+
+            <button className="flex items-center gap-3 p-3 sm:p-4 border border-gray-200 rounded-lg hover:border-green-500 hover:bg-green-50 transition-all duration-300 group">
               <div className="bg-green-100 p-2 rounded-lg group-hover:bg-green-200 transition-colors">
-                <MdAccountBalance className="text-green-600" />
+                <MdAccountBalance className="text-green-600 text-sm sm:text-base" />
               </div>
-              <span className="font-medium text-gray-700">Payroll Report</span>
+              <span className="font-medium text-gray-700 text-sm sm:text-base">
+                Payroll Report
+              </span>
             </button>
-            
-            <button className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-all duration-300 group">
+
+            <button className="flex items-center gap-3 p-3 sm:p-4 border border-gray-200 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-all duration-300 group">
               <div className="bg-purple-100 p-2 rounded-lg group-hover:bg-purple-200 transition-colors">
-                <FaCalendarAlt className="text-purple-600" />
+                <FaCalendarAlt className="text-purple-600 text-sm sm:text-base" />
               </div>
-              <span className="font-medium text-gray-700">Payment Schedule</span>
+              <span className="font-medium text-gray-700 text-sm sm:text-base">
+                Payment Schedule
+              </span>
             </button>
-            
-            <button className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition-all duration-300 group">
+
+            <button className="flex items-center gap-3 p-3 sm:p-4 border border-gray-200 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition-all duration-300 group">
               <div className="bg-orange-100 p-2 rounded-lg group-hover:bg-orange-200 transition-colors">
-                <FaDollarSign className="text-orange-600" />
+                <FaDollarSign className="text-orange-600 text-sm sm:text-base" />
               </div>
-              <span className="font-medium text-gray-700">Tax Summary</span>
+              <span className="font-medium text-gray-700 text-sm sm:text-base">
+                Tax Summary
+              </span>
             </button>
           </div>
         </div>

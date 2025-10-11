@@ -37,6 +37,7 @@ import { MdEmail, MdWorkHistory, MdFamilyRestroom } from "react-icons/md";
 import { RiVerifiedBadgeFill } from "react-icons/ri";
 import { FiDownload } from "react-icons/fi";
 import ProgressBar from "./ProgressBar";
+import LoadingSpinner from "../common/LoadingSpinner";
 
 const Profile = () => {
   const [employee, setEmployees] = useState(null);
@@ -112,10 +113,12 @@ const Profile = () => {
   const department = employee?.department?.dep_name || "default";
   const deptInfo = departmentData[department] || departmentData.default;
 
-  if (loading) {
+ if (loading) {
     return (
-      <div className="w-full h-screen flex justify-center items-center">
-        <Loader />
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          <LoadingSpinner text="Checking your profile Please wait..." size="lg" />
+        </div>
       </div>
     );
   }

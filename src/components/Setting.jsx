@@ -5,6 +5,7 @@ import { useAuth } from "../Store/authContext";
 import { useNavigate } from "react-router-dom";
 import { AllApi } from "../CommonApiContainer/AllApi";
 import Loader from "./Loader";
+import LoadingSpinner from "./common/LoadingSpinner";
 
 const Setting = () => {
   const { user = {} } = useAuth();
@@ -157,9 +158,9 @@ const calculatePasswordStrength = useCallback((password) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
-          <Loader />
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          <LoadingSpinner text="updating Password Please wait..." size="lg" />
         </div>
       </div>
     );

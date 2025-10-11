@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { FiSave, FiArrowLeft, FiBriefcase, FiFileText, FiUser, FiMail, FiMapPin, FiCalendar } from 'react-icons/fi';
 import { AllApi } from '../../CommonApiContainer/AllApi';
 import Loader from '../Loader';
+import LoadingSpinner from '../common/LoadingSpinner';
 
 const EditDepartment = () => {
   const navigate = useNavigate();
@@ -162,15 +163,14 @@ const EditDepartment = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          <Loader />
-          <p className="text-center mt-4 text-gray-600">Loading department data...</p>
-        </div>
-      </div>
-    );
-  }
+     return (
+       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
+         <div className="bg-white rounded-2xl shadow-xl p-8">
+           <LoadingSpinner text="Fetch Edited Department Please wait..." size="lg" />
+         </div>
+       </div>
+     );
+   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-100 py-8 px-4 sm:px-6 lg:px-8">

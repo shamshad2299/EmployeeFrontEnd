@@ -20,6 +20,7 @@ import {
   BadgeCheck,
   Sparkles
 } from "lucide-react";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -173,10 +174,9 @@ const Signup = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex justify-center items-center">
-        <div className="text-center">
-          <Loader />
-          <p className="text-white mt-4 text-lg">Creating your account...</p>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          <LoadingSpinner text="Signup/Register Please wait..." size="lg" />
         </div>
       </div>
     );

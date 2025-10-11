@@ -6,21 +6,17 @@ import Loader from "./Loader";
 const NavBar = () => {
   const { user, logout } = useAuth();
 
-  return !user ? (
-    <div className="w-full bg-gradient-to-br from-amber-50 to-yellow-100 flex justify-center items-center h-screen">
-      <Loader />
-    </div>
-  ) : (
-    <div className="lg:w-[calc(100vw-240px)] lg:ml-60 w-screen min-h-screen bg-gray-50 ">
+  return  (
+    <div className="lg:w-[calc(100vw-240px)] lg:ml-56 w-screen min-h-screen bg-gray-50 ">
       {/* Enhanced Header */}
-      <div className="flex top-0 z-20 h-16 bg-gradient-to-r from-teal-600 to-emerald-600 lg:w-[calc(100vw-240px)] justify-between items-center w-screen px-6 shadow-lg fixed">
+      <div className="flex top-0 z-20 h-14 bg-gradient-to-r from-teal-600 to-emerald-600 lg:w-[calc(100vw-240px)] justify-between items-center w-screen px-6 shadow-lg fixed">
         <div className="flex items-center space-x-4">
-          <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+          <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm max-md:ml-6 max-md:hidden">
             <span className="text-white font-bold text-lg">
               {user.name?.charAt(0).toUpperCase()}
             </span>
           </div>
-          <div>
+          <div className="max-md:ml-10">
             <p className="text-white/90 text-sm font-light">Welcome back</p>
             <p className="text-white font-semibold text-lg">{user.name}</p>
           </div>

@@ -3,6 +3,7 @@ import { FaUserShield, FaBell, FaLock, FaLanguage } from 'react-icons/fa';
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState('account');
+  const [loading , setLoading] = useState(false);
   const [formData, setFormData] = useState({
     notifications: true,
     language: 'en',

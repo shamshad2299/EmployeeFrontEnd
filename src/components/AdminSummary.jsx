@@ -17,6 +17,7 @@ import SummaryCard from "./Departments/SummaryCard";
 import axios from "axios";
 import { AllApi } from "../CommonApiContainer/AllApi";
 import Loader from "./Loader";
+import LoadingSpinner from "./common/LoadingSpinner";
 
 const AdminSummary = () => {
   const [summary, setSummary] = useState(null);
@@ -62,8 +63,10 @@ const AdminSummary = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex justify-center items-center">
-        <Loader />
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          <LoadingSpinner text="Loading Admin Dashboard Please wait..." size="lg" />
+        </div>
       </div>
     );
   }

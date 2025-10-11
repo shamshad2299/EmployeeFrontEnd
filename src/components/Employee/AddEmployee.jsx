@@ -22,6 +22,7 @@ import {
   FiCheck,
   FiX
 } from "react-icons/fi";
+import LoadingSpinner from "../common/LoadingSpinner";
 
 const AddEmployee = () => {
   const navigate = useNavigate();
@@ -43,7 +44,7 @@ const AddEmployee = () => {
     image: null,
   });
   
-  const [loading, setLoading] = useState(false);
+
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
   const { department } = useAuth();
@@ -218,6 +219,7 @@ const AddEmployee = () => {
       navigate(isAdmin ? "/admin/employee-dashboard" : "/employee-dashboard");
     }
   };
+
 
   // ... (JSX part remains the same as previous premium version)
   return (

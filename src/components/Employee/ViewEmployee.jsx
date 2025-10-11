@@ -6,6 +6,7 @@ import { AllApi } from '../../CommonApiContainer/AllApi';
 import Loader from '../Loader';
 import { FaUserTie, FaIdBadge, FaVenusMars, FaBirthdayCake, FaBuilding, FaHeart, FaPhone, FaEnvelope, FaMapMarkerAlt, FaCalendarAlt, FaBriefcase, FaGraduationCap } from 'react-icons/fa';
 import { MdEmail, MdWorkHistory, MdFamilyRestroom } from 'react-icons/md';
+import LoadingSpinner from '../common/LoadingSpinner';
 
 const ViewEmployee = () => {
   const { id } = useParams();
@@ -38,10 +39,12 @@ const ViewEmployee = () => {
   }, []);
 
 
-  if (loading) {
+   if (loading) {
     return (
-      <div className="w-full flex justify-center items-center h-screen">
-        <Loader />
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          <LoadingSpinner text="Employee Viewing Employee Please wait..." size="lg" />
+        </div>
       </div>
     );
   }

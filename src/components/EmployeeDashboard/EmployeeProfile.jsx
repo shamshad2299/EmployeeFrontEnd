@@ -6,6 +6,7 @@ import Loader from '../Loader';
 import { FaUserTie, FaIdBadge, FaVenusMars, FaBirthdayCake, FaBuilding, FaHeart, FaPhone, FaEnvelope, FaMapMarkerAlt, FaCalendarAlt, FaBriefcase, FaGraduationCap, FaUserShield } from 'react-icons/fa';
 import { MdEmail, MdWorkHistory, MdFamilyRestroom } from 'react-icons/md';
 import { useNotice  } from '../../helper/Notice';
+import LoadingSpinner from '../common/LoadingSpinner';
 
 const EmployeeProfile = () => {
 const user = JSON.parse(localStorage.getItem("userId"));
@@ -51,10 +52,12 @@ const user = JSON.parse(localStorage.getItem("userId"));
    
   }, [employee?.status]);
 
-  if (loading) {
+ if (loading) {
     return (
-      <div className="w-full flex justify-center items-center h-screen">
-        <Loader />
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          <LoadingSpinner text="Chcking your Profile Please wait..." size="lg" />
+        </div>
       </div>
     );
   }

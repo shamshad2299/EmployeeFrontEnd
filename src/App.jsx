@@ -86,7 +86,7 @@ function App() {
               element={<AddEmployee></AddEmployee>}
             ></Route>
             <Route
-              path="/admin/edit-employees/:id"
+              path="/admin/editemployee/:id"
               element={<EditEmployee></EditEmployee>}
             ></Route>
             <Route

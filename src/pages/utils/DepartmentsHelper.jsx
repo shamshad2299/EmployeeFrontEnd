@@ -68,7 +68,7 @@ const confirm = window.confirm(`Do you want to delete department ?`)
  }
 
   return (
-    loading ?  <div className="w-full  flex justify-center items-center h-full"><Loader ></Loader></div> :  <div className="w-full flex justify-center items-center max-sm:flex-col max-sm:gap-4 ">
+    loading ?  <div className="w-full  flex justify-center items-center h-full">loading</div> :  <div className="w-full flex justify-center items-center max-sm:flex-col max-sm:gap-4 ">
       <button
         className=" px-6 py-1 rounded-md bg-teal-500 text-white font-semibold cursor-pointer"
         onClick={handleEdit}
